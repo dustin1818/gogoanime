@@ -1,0 +1,3 @@
+<template>
+    Series View
+</template>
