@@ -3,14 +3,18 @@ import { ref, onMounted, onUnmounted, reactive } from "vue";
 import { useGogoAnimeStore } from "../store/home";
 import "vue3-carousel/carousel.css";
 import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
+import Modal from "../components/Modal.vue";
 
 const isMobileMenuOpen = ref(false);
+const isModalOpen = ref(false);
 const searchQuery = ref("");
 const mobileSearchQuery = ref("");
 const store = useGogoAnimeStore();
 const anime = reactive({
   data: {},
 });
+
+const selectedGenres = ref([]);
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -54,6 +58,10 @@ onUnmounted(() => {
 const carouselConfig = {
   itemsToShow: 1,
   wrapAround: true,
+};
+
+const showGenreModal = () => {
+  isModalOpen.value = true;
 };
 </script>
 
@@ -202,7 +210,7 @@ const carouselConfig = {
               <span
                 class="absolute top-2 right-2 bg-[#C32F00] text-white text-xs px-2 py-0.5 rounded"
               >
-                  {{ anime.type }} Show
+                {{ anime.type }} Show
               </span>
 
               <span
@@ -214,7 +222,7 @@ const carouselConfig = {
               <span
                 class="absolute bottom-2 right-2 bg-[#DD8808] text-black text-xs px-2 py-0.5 rounded"
               >
-              Sub
+                Sub
               </span>
 
               <div
@@ -245,7 +253,71 @@ const carouselConfig = {
       </div>
     </div>
 
-    <div class="right-main w-[500px]"></div>
+    <div class="right-main w-[500px]">
+      <div class="border border-[#222222] rounded bg-[#222222] p-3">
+        <div
+          class="font-['Poppins'] flex items-center justify-center gap-1 border border-[#333333] rounded bg-[#333333] text-white text-center text-sm p-3 cursor-pointer"
+          @click="showGenreModal"
+        >
+          Genre all
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 9L12 15L18 9"
+              stroke="#FFFFFF"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+
+        <Modal :show="isModalOpen" @close="isModalOpen = false">
+          <div class="flex flex-wrap gap-3">
+            <div
+              class="flex gap-1"
+              v-for="genre in anime.data.genres"
+              :key="genre"
+            >
+              <input
+                type="checkbox"
+                :value="genre"
+                v-model="selectedGenres"
+                class="cursor-pointer"
+              />
+              <span>{{ genre }}</span>
+            </div>
+          </div>
+        </Modal>
+
+        <button
+          class="flex items-center justify-center gap-1 p-2 mt-4 rounded w-full text-white text-sm text-center bg-[#DD8808]"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="#FFFFFF"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+            />
+          </svg>
+
+          Search
+        </button>
+      </div>
+    </div>
   </main>
 </template>
 
@@ -297,6 +369,5 @@ const carouselConfig = {
 
 .right-main {
   height: 100vh;
-  border: solid 1px saddlebrown;
 }
 </style>
