@@ -14,12 +14,21 @@ export const useGogoAnimeStore = defineStore('anime', () => {
 
     const fetchAnimeInfo = async (id) => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_ANIME_INFO}/${id}`);
+            const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}/${id}`);
             return response.data;
         } catch (error) {
             console.error('Fetching anime info failed', error);
         }
     }
 
-    return {fetchHomeInfo, fetchAnimeInfo}
+    const fetchAnimeEpisodes = async (id) => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}/${id}/episodes`);
+            return response.data;
+        } catch (error) {
+            console.error('Fetching anime info failed', error);
+        }
+    }
+
+    return {fetchHomeInfo, fetchAnimeInfo, fetchAnimeEpisodes}
 })
