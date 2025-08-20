@@ -6,11 +6,20 @@ export const useGogoAnimeStore = defineStore('anime', () => {
     const fetchHomeInfo = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_HOME_API_URL}`);
-            return response.data
+            return response.data;
         } catch (error) {
-            console.error('Fetching home info failed', error)
+            console.error('Fetching home info failed', error);
         }
     }
 
-    return {fetchHomeInfo}
+    const fetchAnimeInfo = async (id) => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_ANIME_INFO}/${id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Fetching anime info failed', error);
+        }
+    }
+
+    return {fetchHomeInfo, fetchAnimeInfo}
 })

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import SeriesView from "../views/SeriesView.vue";
+import AnimeInfoView from "../views/AnimeInfoView.vue";
 
 const routes = [
     {
@@ -8,6 +9,10 @@ const routes = [
     },
     {
         path: '/series', component: SeriesView
+    },
+    {
+        path:'/anime-info/:id',
+        component: AnimeInfoView
     }
 ]
 

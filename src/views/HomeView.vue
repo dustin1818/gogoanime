@@ -4,6 +4,8 @@ import { useGogoAnimeStore } from "../store/home";
 import "vue3-carousel/carousel.css";
 import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
 import Modal from "../components/Modal.vue";
+import Ongoing from "../components/Ongoing.vue";
+import Categories from "../components/Categories.vue";
 
 const isMobileMenuOpen = ref(false);
 const isModalOpen = ref(false);
@@ -200,60 +202,62 @@ const showGenreModal = () => {
             v-for="anime in anime.data.topAiringAnimes"
             :key="anime.id"
           >
-            <div class="relative">
-              <img
-                :src="anime.poster"
-                :alt="anime.name"
-                class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-110"
-              />
+            <router-link :to="`/anime-info/${anime.id}`">
+              <div class="relative">
+                <img
+                  :src="anime.poster"
+                  :alt="anime.name"
+                  class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
 
-              <span
-                class="absolute top-2 right-2 bg-[#C32F00] text-white text-xs px-2 py-0.5 rounded"
-              >
-                {{ anime.type }} Show
-              </span>
-
-              <span
-                class="absolute bottom-2 left-2 bg-[#0B0A0D] text-white text-xs px-2 py-0.5 rounded"
-              >
-                Ep: {{ anime.episodes.sub }}/{{ anime.episodes.sub }}
-              </span>
-
-              <span
-                class="absolute bottom-2 right-2 bg-[#DD8808] text-black text-xs px-2 py-0.5 rounded"
-              >
-                Sub
-              </span>
-
-              <div
-                class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              >
-                <div
-                  class="bg-white/70 w-12 h-12 rounded-full flex items-center justify-center"
+                <span
+                  class="absolute top-2 right-2 bg-[#C32F00] text-white text-xs px-2 py-0.5 rounded"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 text-black"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
+                  {{ anime.type }} Show
+                </span>
+
+                <span
+                  class="absolute bottom-2 left-2 bg-[#0B0A0D] text-white text-xs px-2 py-0.5 rounded"
+                >
+                  Ep: {{ anime.episodes.sub }}/{{ anime.episodes.sub }}
+                </span>
+
+                <span
+                  class="absolute bottom-2 right-2 bg-[#DD8808] text-black text-xs px-2 py-0.5 rounded"
+                >
+                  Sub
+                </span>
+
+                <div
+                  class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                >
+                  <div
+                    class="bg-white/70 w-12 h-12 rounded-full flex items-center justify-center"
                   >
-                    <path d="M6 4l10 6-10 6V4z" />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-6 w-6 text-black"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M6 4l10 6-10 6V4z" />
+                    </svg>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <span
-              class="text-white text-center block text-xs mt-5 transition-colors duration-300 group-hover:text-[#DD8808]"
-            >
-              {{ anime.name }}
-            </span>
+              <span
+                class="text-white text-center block text-xs mt-5 transition-colors duration-300 group-hover:text-[#DD8808]"
+              >
+                {{ anime.name }}
+              </span>
+            </router-link>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="right-main w-[500px]">
+    <div class="right-main w-[650px]">
       <div class="border border-[#222222] rounded bg-[#222222] p-3">
         <div
           class="font-['Poppins'] flex items-center justify-center gap-1 border border-[#333333] rounded bg-[#333333] text-white text-center text-sm p-3 cursor-pointer"
@@ -317,6 +321,9 @@ const showGenreModal = () => {
           Search
         </button>
       </div>
+      <Ongoing :ongoing-anime="anime.data.latestEpisodeAnimes" />
+
+      <Categories :categories-anime="anime.data.top10Animes" />
     </div>
   </main>
 </template>
@@ -334,11 +341,11 @@ const showGenreModal = () => {
 }
 
 .orange-upper span:hover {
-  padding: 4px;
+  padding: 1px;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: #333333;
+  transition: all 0.1s ease;
+  color: #333333;
 }
 
 .anime-description {
