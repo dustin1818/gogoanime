@@ -25,6 +25,7 @@ const fetchAnime = async (id) => {
     ]);
     anime.data = animeData.data;
     anime.eps = animeEps.data;
+    console.log(anime.eps)
   } catch (error) {
     console.error(error);
   } finally {
@@ -66,7 +67,7 @@ const bookmarkPage = () => {
     Loading...
   </div>
 
-  <div class="anime-info max-w-4/5 flex mx-auto px-3 py-5" v-else>
+  <div class="anime-info max-w-4/5 flex mx-auto gap-9 px-3 py-5" v-else>
     <Modal
       :show="showModal"
       @close="closeModal"
@@ -92,8 +93,8 @@ const bookmarkPage = () => {
       </Modal>
     </div>
 
-    <div class="max-w-[1100px] mx-auto p-6">
-      <div class="flex flex-col lg:flex-row gap-8 font-['Poppins']">
+    <div class="max-w-[1100px] mx-auto ">
+      <div class="flex flex-col bg-[#222222] rounded p-6 lg:flex-row gap-8 font-['Poppins']">
         <div class="lg:w-80 flex-shrink-0">
           <div class="relative mb-4">
             <img
@@ -106,7 +107,7 @@ const bookmarkPage = () => {
           <div class="space-y-3">
             <button
               @click="openModal"
-              class="w-full bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
+              class="w-full bg-red-600 hover:bg-red-700 text-white text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
             >
               <i class="fab fa-youtube"></i>
               Trailer
@@ -114,7 +115,7 @@ const bookmarkPage = () => {
 
             <button
               @click="bookmarkPage"
-              class="w-full bg-[#DD8808] hover:bg-orange-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
+              class="w-full bg-[#DD8808] hover:bg-orange-600 text-white text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
             >
               <i class="fas fa-bookmark"></i>
               Bookmark
@@ -127,12 +128,12 @@ const bookmarkPage = () => {
         </div>
 
         <div class="flex-1">
-          <h1 class="text-3xl text-white lg:text-4xl font-bold mb-6">
+          <h1 class="text-2xl text-white font-bold mb-3">
             {{ anime.data.anime?.info.name }}
           </h1>
 
           <div class="mb-8">
-            <p class="text-gray-300 leading-relaxed mb-4">
+            <p class="text-gray-300 text-sm leading-relaxed mb-4">
               {{ anime.data.anime?.info.description }}
             </p>
             <p class="text-gray-400 text-sm">
@@ -146,8 +147,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Status:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">Status:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.moreInfo.status
                 }}</span>
               </div>
@@ -155,8 +156,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Studio:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">Studio:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.moreInfo.studios
                 }}</span>
               </div>
@@ -164,8 +165,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Released:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">Released:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.moreInfo.aired
                 }}</span>
               </div>
@@ -173,8 +174,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Duration:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">Duration:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.moreInfo.duration
                 }}</span>
               </div>
@@ -182,8 +183,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Season:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">Season:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.moreInfo.premiered
                 }}</span>
               </div>
@@ -194,8 +195,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Type:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">Type:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.info.stats.type
                 }}</span>
               </div>
@@ -203,8 +204,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Episodes:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">Episodes:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.info.stats.episodes.sub
                 }}</span>
               </div>
@@ -212,8 +213,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">Posted by:</span>
-                <div class="flex flex-wrap gap-2">
+                <span class="text-gray-400 text-sm">Posted by:</span>
+                <div class="flex flex-wrap gap-2 text-sm">
                   <span
                     class="text-white"
                     v-for="producer in anime.data.anime?.moreInfo.producers"
@@ -225,8 +226,8 @@ const bookmarkPage = () => {
                 <span
                   class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
                 ></span>
-                <span class="text-gray-400">MAL Score:</span>
-                <span class="text-white">{{
+                <span class="text-gray-400 text-sm">MAL Score:</span>
+                <span class="text-white text-sm">{{
                   anime.data.anime?.moreInfo.malscore
                 }}</span>
               </div>
@@ -236,7 +237,7 @@ const bookmarkPage = () => {
           <div class="mb-6 flex flex-wrap gap-2.5">
             <span
               v-for="genre in anime.data.anime?.moreInfo.genres"
-              class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full border border-[#DD8808] cursor-pointer transition-colors"
+              class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full border border-[#DD8808] cursor-pointer transition-colors text-sm"
             >
               {{ genre }}
             </span>
