@@ -34,9 +34,12 @@ const props = defineProps({
         {{ tab }}
       </div>
     </div>
-    <div
+
+    <router-link
+      :to="`/anime-info/${anime.id}`"
       class="text-white flex items-center mb-4"
       v-for="(anime, index) in categoriesAnime?.week"
+      :key="anime.id"
       v-if="activeTab === tabs[0]"
     >
       <div
@@ -45,15 +48,20 @@ const props = defineProps({
         {{ index + 1 }}
       </div>
       <div class="anime flex gap-3.5 items-start">
-        <img class="h-28 cursor-pointer hover:scale-110 transition-all" :src="anime.poster" :alt="anime.poster" />
+        <img
+          class="h-28 cursor-pointer hover:scale-110 transition-all"
+          :src="anime.poster"
+          :alt="anime.poster"
+        />
 
         <div class="flex flex-col">
           <h2>{{ anime.name }}</h2>
         </div>
       </div>
-    </div>
+    </router-link>
 
-    <div
+    <router-link
+      :to="`/anime-info/${anime.id}`"
       class="text-white flex items-center mb-4"
       v-for="(anime, index) in categoriesAnime?.month"
       v-if="activeTab === tabs[1]"
@@ -64,15 +72,20 @@ const props = defineProps({
         {{ index + 1 }}
       </div>
       <div class="anime flex gap-3.5 items-start">
-        <img class="h-28 cursor-pointer hover:scale-110 transition-all" :src="anime.poster" :alt="anime.poster" />
+        <img
+          class="h-28 cursor-pointer hover:scale-110 transition-all"
+          :src="anime.poster"
+          :alt="anime.poster"
+        />
 
         <div class="flex flex-col">
           <h2>{{ anime.name }}</h2>
         </div>
       </div>
-    </div>
+    </router-link>
 
-    <div
+    <router-link
+      :to="`/anime-info/${anime.id}`"
       class="text-white flex items-center mb-4"
       v-for="(anime, index) in categoriesAnime?.today"
       v-if="activeTab === tabs[2]"
@@ -83,13 +96,17 @@ const props = defineProps({
         {{ index + 1 }}
       </div>
       <div class="anime flex gap-3.5 items-start">
-        <img class="h-28 cursor-pointer hover:scale-110 transition-all " :src="anime.poster" :alt="anime.poster" />
+        <img
+          class="h-28 cursor-pointer hover:scale-110 transition-all"
+          :src="anime.poster"
+          :alt="anime.poster"
+        />
 
         <div class="flex flex-col">
           <h2>{{ anime.name }}</h2>
         </div>
       </div>
-    </div>
+    </router-link>
   </div>
 </template>
 

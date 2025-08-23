@@ -14,7 +14,8 @@ const props = defineProps({
       <h1 class="font-semibold p-2 font-['Poppins']">Ongoing Anime</h1>
 
       <div class="ongoing-container">
-        <div
+        <router-link
+          :to="`/anime-info/${ongoing.id}`"
           class="ongoing-anime group cursor-pointer flex items-center justify-between border-t border-b border-t-[#2D2D2D] border-b-[#2D2D2D] px-3 py-1 hover:border-[#333333] hover:bg-[#333333]"
           v-for="ongoing in ongoingAnime"
           :key="ongoing.id"
@@ -46,7 +47,7 @@ const props = defineProps({
           >
             Episode {{ ongoing.episodes?.sub }}
           </div>
-        </div>
+        </router-link>
       </div>
     </div>
   </div>
