@@ -1,22 +1,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted, reactive } from "vue";
-import { useGogoAnimeStore } from "../store/home";
+import { useGogoAnimeStore } from "../store/store";
 import "vue3-carousel/carousel.css";
 import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
-import Modal from "../components/Modal.vue";
-import Ongoing from "../components/Ongoing.vue";
-import Categories from "../components/Categories.vue";
+import RightPanel from "../components/RightPanel.vue"
 
 const isMobileMenuOpen = ref(false);
-const isModalOpen = ref(false);
 const searchQuery = ref("");
 const mobileSearchQuery = ref("");
 const store = useGogoAnimeStore();
-const anime = reactive({
-  data: {},
-});
-
-const selectedGenres = ref([]);
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -47,9 +39,8 @@ onMounted(async () => {
   document.addEventListener("click", handleClickOutside);
   window.addEventListener("resize", handleResize);
 
-  const animeData = await store.fetchHomeInfo();
-  anime.data = animeData.data;
-  console.log(anime.data);
+  await store.fetchHomeInfo();
+  console.log(store.animeData);
 });
 
 onUnmounted(() => {
@@ -62,9 +53,7 @@ const carouselConfig = {
   wrapAround: true,
 };
 
-const showGenreModal = () => {
-  isModalOpen.value = true;
-};
+
 </script>
 
 <template>
@@ -156,7 +145,7 @@ const showGenreModal = () => {
         :mouse-drag="true"
         :touch-drag="true"
       >
-        <Slide v-for="anime in anime.data.spotlightAnimes" :key="anime.id">
+        <Slide v-for="anime in store.animeData.data?.spotlightAnimes" :key="anime.id">
           <div class="carousel__item">
             <div class="card flex text-white gap-3">
               <div class="card-img relative w-full">
@@ -199,7 +188,7 @@ const showGenreModal = () => {
         <div class="grid grid-cols-5 gap-3.5 p-4 font-['Poppins']">
           <div
             class="card cursor-pointer group relative overflow-hidden"
-            v-for="anime in anime.data.topAiringAnimes"
+            v-for="anime in store.animeData.data?.topAiringAnimes"
             :key="anime.id"
           >
             <router-link :to="`/anime-info/${anime.id}`">
@@ -257,74 +246,7 @@ const showGenreModal = () => {
       </div>
     </div>
 
-    <div class="right-main w-[650px]">
-      <div class="border border-[#222222] rounded bg-[#222222] p-3">
-        <div
-          class="font-['Poppins'] flex items-center justify-center gap-1 border border-[#333333] rounded bg-[#333333] text-white text-center text-sm p-3 cursor-pointer"
-          @click="showGenreModal"
-        >
-          Genre all
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6 9L12 15L18 9"
-              stroke="#FFFFFF"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-        </div>
-
-        <Modal :show="isModalOpen" @close="isModalOpen = false">
-          <div class="flex flex-wrap gap-3">
-            <div
-              class="flex gap-1"
-              v-for="genre in anime.data.genres"
-              :key="genre"
-            >
-              <input
-                type="checkbox"
-                :value="genre"
-                v-model="selectedGenres"
-                class="cursor-pointer"
-              />
-              <span>{{ genre }}</span>
-            </div>
-          </div>
-        </Modal>
-
-        <button
-          class="flex items-center justify-center gap-1 p-2 mt-4 rounded w-full text-white text-sm text-center bg-[#DD8808]"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="#FFFFFF"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-            />
-          </svg>
-
-          Search
-        </button>
-      </div>
-      <Ongoing :ongoing-anime="anime.data.latestEpisodeAnimes" />
-
-      <Categories :categories-anime="anime.data.top10Animes" />
-    </div>
+    <RightPanel />
   </main>
 </template>
 
@@ -341,7 +263,6 @@ const showGenreModal = () => {
 }
 
 .orange-upper span:hover {
-  padding: 1px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.1s ease;
