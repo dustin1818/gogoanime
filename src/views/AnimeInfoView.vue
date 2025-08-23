@@ -1,13 +1,14 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useGogoAnimeStore } from "../store/home";
+import { useGogoAnimeStore } from "../store/store";
+import Swal from "sweetalert2";
 import Modal from "@/components/Modal.vue";
+import RightPanel from "../components/RightPanel.vue";
 
 const route = useRoute();
-const id = route.params.id;
-
 const store = useGogoAnimeStore();
+
 const anime = reactive({
   data: {},
   eps: {},
@@ -15,37 +16,62 @@ const anime = reactive({
 
 const isLoading = ref(false);
 
-onMounted(async () => {
+const fetchAnime = async (id) => {
   try {
     isLoading.value = true;
-    const animeData = await store.fetchAnimeInfo(id);
-    const animeEps = await store.fetchAnimeEpisodes(id);
+    const [animeData, animeEps] = await Promise.all([
+      store.fetchAnimeInfo(id),
+      store.fetchAnimeEpisodes(id),
+    ]);
     anime.data = animeData.data;
     anime.eps = animeEps.data;
-    console.log(anime.data);
-    console.log(anime.eps);
   } catch (error) {
     console.error(error);
   } finally {
     isLoading.value = false;
   }
-});
-
-const showModal = ref(false);
-
-const openModal = () => {
-  showModal.value = true;
 };
 
-const closeModal = () => {
-  showModal.value = false;
+onMounted(() => {
+  fetchAnime(route.params.id);
+});
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    fetchAnime(newId);
+  }
+);
+
+const showModal = ref(false);
+const openModal = () => (showModal.value = true);
+const closeModal = () => (showModal.value = false);
+
+const bookmarkPage = () => {
+  Swal.fire({
+    title: "Bookmark Page",
+    text: "Do you want to bookmark?",
+    icon: "question",
+    confirmButtonText: "Confirm",
+    confirmButtonColor: "#DD8808",
+  });
 };
 </script>
 
 <template class="bg-gray-900 text-white min-h-screen">
-  <div class="text-white text-2xl text-center min-h-screen flex justify-center items-center" v-if="isLoading">Loading...</div>
-  <div class="anime-info" v-else>
-    <Modal :show="showModal" @close="closeModal">
+  <div
+    class="text-white text-2xl text-center min-h-screen flex justify-center items-center"
+    v-if="isLoading"
+  >
+    Loading...
+  </div>
+
+  <div class="anime-info max-w-4/5 flex mx-auto px-3 py-5" v-else>
+    <Modal
+      :show="showModal"
+      @close="closeModal"
+      v-if="anime.data.anime?.info.promotionalVideos[0]?.source"
+    >
       <iframe
         width="100%"
         height="315"
@@ -58,7 +84,15 @@ const closeModal = () => {
       </iframe>
     </Modal>
 
-    <div class="max-w-6xl mx-auto p-6">
+    <div v-else>
+      <Modal :show="showModal" @close="closeModal">
+        <h1 class="font=['Poppins'] text-2xl text-center">
+          No trailer at the moment
+        </h1>
+      </Modal>
+    </div>
+
+    <div class="max-w-[1100px] mx-auto p-6">
       <div class="flex flex-col lg:flex-row gap-8 font-['Poppins']">
         <div class="lg:w-80 flex-shrink-0">
           <div class="relative mb-4">
@@ -67,11 +101,6 @@ const closeModal = () => {
               :alt="anime.data.anime?.info.poster"
               class="w-full h-96 object-contain rounded-lg shadow-lg"
             />
-            <div
-              class="absolute top-2 right-2 bg-black bg-opacity-60 rounded-full p-2"
-            >
-              <i class="fas fa-heart text-gray-300 text-sm"></i>
-            </div>
           </div>
 
           <div class="space-y-3">
@@ -84,7 +113,8 @@ const closeModal = () => {
             </button>
 
             <button
-              class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
+              @click="bookmarkPage"
+              class="w-full bg-[#DD8808] hover:bg-orange-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
             >
               <i class="fas fa-bookmark"></i>
               Bookmark
@@ -206,7 +236,7 @@ const closeModal = () => {
           <div class="mb-6 flex flex-wrap gap-2.5">
             <span
               v-for="genre in anime.data.anime?.moreInfo.genres"
-              class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full border border-orange-500 cursor-pointer transition-colors"
+              class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full border border-[#DD8808] cursor-pointer transition-colors"
             >
               {{ genre }}
             </span>
@@ -214,5 +244,7 @@ const closeModal = () => {
         </div>
       </div>
     </div>
+
+    <RightPanel />
   </div>
 </template>
