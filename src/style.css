@@ -4,3 +4,14 @@
 body{
     background-color: #121212;
 }
+
+
+:root {
+  --vc-pgn-height: 12px;
+  --vc-pgn-width: 12px;
+}
+
+.container-anime {
+  max-width: 1424px;
+}
+
