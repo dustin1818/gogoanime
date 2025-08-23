@@ -1,12 +1,23 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { ref } from 'vue'
 
 export const useGogoAnimeStore = defineStore('anime', () => {
+
+    const animeData = ref([]);
+
+    const selectedGenres = ref([]);
+    const isModalOpen = ref(false);
+
+    const showGenreModal = () => {
+        isModalOpen.value = true;
+      };
     
     const fetchHomeInfo = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_HOME_API_URL}`);
-            return response.data;
+            animeData.value = response.data;
+            return animeData.value
         } catch (error) {
             console.error('Fetching home info failed', error);
         }
@@ -30,5 +41,5 @@ export const useGogoAnimeStore = defineStore('anime', () => {
         }
     }
 
-    return {fetchHomeInfo, fetchAnimeInfo, fetchAnimeEpisodes}
+    return {selectedGenres, isModalOpen, showGenreModal, animeData, fetchHomeInfo, fetchAnimeInfo, fetchAnimeEpisodes}
 })
