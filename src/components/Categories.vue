@@ -43,11 +43,11 @@ const props = defineProps({
       v-if="activeTab === tabs[0]"
     >
       <div
-        class="text-sm border border-[#888888] text-[#888888] p-3 px-4 rounded mx-4.5"
+      class="text-sm border border-[#888888] text-[#888888] p-3 px-4 rounded mx-4.5 font-['Poppins']"
       >
         {{ index + 1 }}
       </div>
-      <div class="anime flex gap-3.5 items-start">
+      <div class="anime flex gap-3.5 items-center">
         <img
           class="h-28 cursor-pointer hover:scale-110 transition-all"
           :src="anime.poster"
@@ -55,7 +55,7 @@ const props = defineProps({
         />
 
         <div class="flex flex-col">
-          <h2>{{ anime.name }}</h2>
+          <h2 class="font-['Poppins'] text-sm">{{ anime.name }}</h2>
         </div>
       </div>
     </router-link>
@@ -67,11 +67,11 @@ const props = defineProps({
       v-if="activeTab === tabs[1]"
     >
       <div
-        class="text-sm border border-[#888888] text-[#888888] p-3 px-4 rounded mx-4.5"
+      class="text-sm border border-[#888888] text-[#888888] p-3 px-4 rounded mx-4.5 font-['Poppins']"
       >
         {{ index + 1 }}
       </div>
-      <div class="anime flex gap-3.5 items-start">
+      <div class="anime flex gap-3.5 items-center">
         <img
           class="h-28 cursor-pointer hover:scale-110 transition-all"
           :src="anime.poster"
@@ -79,7 +79,7 @@ const props = defineProps({
         />
 
         <div class="flex flex-col">
-          <h2>{{ anime.name }}</h2>
+          <h2 class="font-['Poppins'] text-sm">{{ anime.name }}</h2>
         </div>
       </div>
     </router-link>
@@ -91,11 +91,11 @@ const props = defineProps({
       v-if="activeTab === tabs[2]"
     >
       <div
-        class="text-sm border border-[#888888] text-[#888888] p-3 px-4 rounded mx-4.5"
+      class="text-sm border border-[#888888] text-[#888888] p-3 px-4 rounded mx-4.5 font-['Poppins']"
       >
         {{ index + 1 }}
       </div>
-      <div class="anime flex gap-3.5 items-start">
+      <div class="anime flex gap-3.5 items-center">
         <img
           class="h-28 cursor-pointer hover:scale-110 transition-all"
           :src="anime.poster"
@@ -103,7 +103,7 @@ const props = defineProps({
         />
 
         <div class="flex flex-col">
-          <h2>{{ anime.name }}</h2>
+          <h2 class="font-['Poppins'] text-sm">{{ anime.name }}</h2>
         </div>
       </div>
     </router-link>

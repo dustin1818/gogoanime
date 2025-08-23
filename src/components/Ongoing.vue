@@ -37,13 +37,13 @@ const props = defineProps({
                 stroke-linejoin="round"
               />
             </svg>
-            <span class="text-sm group-hover:text-yellow-400">{{
+            <span class="text-xs fira-sans group-hover:text-yellow-400">{{
               ongoing.name
             }}</span>
           </div>
 
           <div
-            class="episode text-white text-[10px] font-semibold bg-[#DD8808] border-[#DD8808] rounded p-1.5"
+            class="episode fira-sans text-white text-[10px] bg-[#DD8808] border-[#DD8808] rounded p-1.5"
           >
             Episode {{ ongoing.episodes?.sub }}
           </div>
@@ -52,3 +52,11 @@ const props = defineProps({
     </div>
   </div>
 </template>
+
+<style>
+
+.fira-sans {
+  font-family: "Fira Sans", sans-serif;
+}
+
+</style>

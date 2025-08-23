@@ -79,6 +79,7 @@ onMounted(async () => {
         Search
       </button>
     </div>
+    
     <Ongoing :ongoing-anime="store.animeData.data?.latestEpisodeAnimes" />
     <Categories :categories-anime="store.animeData.data?.top10Animes" />
   </div>

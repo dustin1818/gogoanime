@@ -1,13 +1,15 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useGogoAnimeStore } from "../store/store";
 import Swal from "sweetalert2";
 import Modal from "@/components/Modal.vue";
 import RightPanel from "../components/RightPanel.vue";
+import Navbar from "@/components/Navbar.vue";
 
 const route = useRoute();
 const store = useGogoAnimeStore();
+const episodeValue = ref("");
 
 const anime = reactive({
   data: {},
@@ -25,7 +27,7 @@ const fetchAnime = async (id) => {
     ]);
     anime.data = animeData.data;
     anime.eps = animeEps.data;
-    console.log(anime.eps)
+    console.log(anime.eps);
   } catch (error) {
     console.error(error);
   } finally {
@@ -57,6 +59,28 @@ const bookmarkPage = () => {
     confirmButtonColor: "#DD8808",
   });
 };
+
+const postComment = () => {
+  Swal.fire({
+    title: "Post Comment",
+    text: "Do you want to post this comment?",
+    icon: "question",
+    confirmButtonText: "Confirm",
+    confirmButtonColor: "#DD8808",
+  });
+};
+
+const filteredEpisodes = computed(() => {
+  if (!episodeValue.value) return anime.eps.episodes;
+
+  return anime.eps.episodes.filter((ep) => {
+    const query = episodeValue.value.toLowerCase().trim();
+    return (
+      `episode ${ep.number}`.toLowerCase().includes(query) ||
+      ep.number.toString().includes(query)
+    );
+  });
+});
 </script>
 
 <template class="bg-gray-900 text-white min-h-screen">
@@ -67,185 +91,340 @@ const bookmarkPage = () => {
     Loading...
   </div>
 
-  <div class="anime-info max-w-4/5 flex mx-auto gap-9 px-3 py-5" v-else>
-    <Modal
-      :show="showModal"
-      @close="closeModal"
-      v-if="anime.data.anime?.info.promotionalVideos[0]?.source"
+  <div v-else>
+    <Navbar />
+
+    <div
+      class="anime-info container-anime flex items-start mx-auto gap-9 px-3 py-5"
     >
-      <iframe
-        width="100%"
-        height="315"
-        :src="anime.data.anime?.info.promotionalVideos[0].source"
-        :title="anime.data.anime?.info.promotionalVideos[0].title"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
+      <Modal
+        :show="showModal"
+        @close="closeModal"
+        v-if="anime.data.anime?.info.promotionalVideos[0]?.source"
       >
-      </iframe>
-    </Modal>
-
-    <div v-else>
-      <Modal :show="showModal" @close="closeModal">
-        <h1 class="font=['Poppins'] text-2xl text-center">
-          No trailer at the moment
-        </h1>
+        <iframe
+          width="100%"
+          height="315"
+          :src="anime.data.anime?.info.promotionalVideos[0].source"
+          :title="anime.data.anime?.info.promotionalVideos[0].title"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        >
+        </iframe>
       </Modal>
-    </div>
 
-    <div class="max-w-[1100px] mx-auto ">
-      <div class="flex flex-col bg-[#222222] rounded p-6 lg:flex-row gap-8 font-['Poppins']">
-        <div class="lg:w-80 flex-shrink-0">
-          <div class="relative mb-4">
-            <img
-              :src="anime.data.anime?.info.poster"
-              :alt="anime.data.anime?.info.poster"
-              class="w-full h-96 object-contain rounded-lg shadow-lg"
+      <template v-else>
+        <Modal :show="showModal" @close="closeModal">
+          <h1 class="font=['Poppins'] text-2xl text-center">
+            No trailer at the moment
+          </h1>
+        </Modal>
+      </template>
+
+      <div class="flex flex-col items-start basis-[1700px]">
+        <div class="flex gap-8 bg-[#222222] rounded p-6 font-['Poppins']">
+          <div class="lg:w-50 flex-shrink-0">
+            <div class="relative mb-4">
+              <img
+                :src="anime.data.anime?.info.poster"
+                :alt="anime.data.anime?.info.poster"
+                class="w-full object-center rounded-lg shadow-lg"
+              />
+            </div>
+
+            <div class="space-y-3">
+              <button
+                @click="openModal"
+                class="w-full bg-red-600 hover:bg-red-700 text-white text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
+              >
+                <i class="fab fa-youtube"></i>
+                Trailer
+              </button>
+
+              <button
+                @click="bookmarkPage"
+                class="w-full bg-[#DD8808] hover:bg-orange-600 text-white text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
+              >
+                <i class="fas fa-bookmark"></i>
+                Bookmark
+              </button>
+            </div>
+
+            <div class="mt-4 text-gray-400 text-sm text-center">
+              Followed 70 people
+            </div>
+          </div>
+
+          <div class="flex-1">
+            <h1 class="text-2xl text-white font-bold mb-3">
+              {{ anime.data.anime?.info.name }}
+            </h1>
+
+            <div class="mb-8">
+              <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                {{ anime.data.anime?.info.description }}
+              </p>
+              <p class="text-gray-400 text-sm">
+                {{ anime.data.anime?.moreInfo.japanese }}
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-8">
+              <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Status:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.moreInfo.status
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Studio:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.moreInfo.studios
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Released:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.moreInfo.aired
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Duration:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.moreInfo.duration
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Season:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.moreInfo.premiered
+                  }}</span>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Type:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.info.stats.type
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Episodes:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.info.stats.episodes.sub
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">Posted by:</span>
+                  <div class="flex flex-wrap gap-2 text-sm">
+                    <span
+                      class="text-white"
+                      v-for="producer in anime.data.anime?.moreInfo.producers"
+                      >{{ producer }},</span
+                    >
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
+                  ></span>
+                  <span class="text-gray-400 text-sm">MAL Score:</span>
+                  <span class="text-white text-sm">{{
+                    anime.data.anime?.moreInfo.malscore
+                  }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-6 flex flex-wrap gap-2.5">
+              <span
+                v-for="genre in anime.data.anime?.moreInfo.genres"
+                class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full border border-[#DD8808] cursor-pointer transition-colors text-sm"
+              >
+                {{ genre }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-full mt-8">
+          <div class="flex w-full">
+            <input
+              type="text"
+              v-model="episodeValue"
+              placeholder="Find episode number exactly"
+              class="mb-3 ml-auto rounded-md bg-[#222222] text-sm text-gray-300 placeholder-gray-600 px-3 py-2 focus:outline-none focus:ring focus:ring-gray-600"
             />
           </div>
 
-          <div class="space-y-3">
-            <button
-              @click="openModal"
-              class="w-full bg-red-600 hover:bg-red-700 text-white text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
-            >
-              <i class="fab fa-youtube"></i>
-              Trailer
-            </button>
-
-            <button
-              @click="bookmarkPage"
-              class="w-full bg-[#DD8808] hover:bg-orange-600 text-white text-sm py-3 px-4 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors"
-            >
-              <i class="fas fa-bookmark"></i>
-              Bookmark
-            </button>
-          </div>
-
-          <div class="mt-4 text-gray-400 text-sm text-center">
-            Followed 70 people
+          <div class="p-4 bg-[#1A1A1A] text-white">
+            <div class="grid grid-cols-5 gap-2">
+              <button
+                class="rounded-md border border-gray-400 bg-[#3B3B3B] px-4 py-2 hover:bg-[#3b3b3bef] hover:text-[#DD8808]"
+                v-for="episode in filteredEpisodes"
+                :key="episode.number"
+              >
+                Episode {{ episode.number }}
+              </button>
+            </div>
           </div>
         </div>
 
-        <div class="flex-1">
-          <h1 class="text-2xl text-white font-bold mb-3">
-            {{ anime.data.anime?.info.name }}
-          </h1>
+        <div
+          class="bg-[#222222] mt-8 w-full font-['Poppins'] text-gray-300 p-6 rounded shadow-md"
+        >
+          <h3 class="text-lg font-semibold text-white mb-2">Comment</h3>
 
-          <div class="mb-8">
-            <p class="text-gray-300 text-sm leading-relaxed mb-4">
-              {{ anime.data.anime?.info.description }}
-            </p>
-            <p class="text-gray-400 text-sm">
-              {{ anime.data.anime?.moreInfo.japanese }}
-            </p>
+          <hr class="my-4" />
+
+          <span class="text-[#919182] mb-5">Leave a Reply</span>
+
+          <p class="text-sm my-6">
+            Your email address will not be published. Required fields are marked
+            <span class="text-red-500">*</span>
+          </p>
+
+          <label for="comment" class="block text-sm font-medium mb-1"
+            >Comment <span class="text-red-500">*</span></label
+          >
+          <textarea
+            id="comment"
+            rows="5"
+            class="w-full rounded-md bg-[#121212] border border-[#121212] text-gray-200 px-3 py-2 mb-4 focus:outline-none focus:ring-1 focus:ring-yellow-500"
+          ></textarea>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label for="name" class="block text-sm font-medium mb-1"
+                >Name <span class="text-red-500">*</span></label
+              >
+              <input
+                type="text"
+                id="name"
+                class="w-full rounded-md bg-[#121212] border border-[#121212] text-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-500"
+              />
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium mb-1"
+                >Email <span class="text-red-500">*</span></label
+              >
+              <input
+                type="email"
+                id="email"
+                class="w-full rounded-md bg-[#121212] border border-[#121212] text-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-500"
+              />
+            </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-8">
-            <div class="space-y-3">
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Status:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.moreInfo.status
-                }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Studio:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.moreInfo.studios
-                }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Released:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.moreInfo.aired
-                }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Duration:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.moreInfo.duration
-                }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Season:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.moreInfo.premiered
-                }}</span>
-              </div>
-            </div>
+          <div class="mb-4">
+            <label for="website" class="block text-sm font-medium mb-1"
+              >Website</label
+            >
+            <input
+              type="text"
+              id="website"
+              class="w-full rounded-md bg-[#121212] border border-[#121212] text-gray-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-500"
+            />
+          </div>
 
-            <div class="space-y-3">
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Type:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.info.stats.type
-                }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Episodes:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.info.stats.episodes.sub
-                }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">Posted by:</span>
-                <div class="flex flex-wrap gap-2 text-sm">
-                  <span
-                    class="text-white"
-                    v-for="producer in anime.data.anime?.moreInfo.producers"
-                    >{{ producer }},</span
+          <div class="flex items-center mb-4">
+            <input
+              type="checkbox"
+              id="save-info"
+              class="mr-2 accent-yellow-500"
+            />
+            <label for="save-info" class="text-sm"
+              >Save my name, email, and website in this browser for the next
+              time I comment.</label
+            >
+          </div>
+
+          <button
+            @click="postComment"
+            type="submit"
+            class="bg-yellow-600 hover:bg-yellow-500 text-white font-medium px-6 py-2 rounded-full transition"
+          >
+            Post Comment
+          </button>
+        </div>
+
+        <div class="bg-[#222222] mt-8 p-6 rounded text-white w-full font-['Poppins']">
+          <div class="max-w-7xl mx-auto">
+            <h1 class="text-2xl font-bold mb-6">Recommended Series</h1>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div class="relative group cursor-pointer">
+                <div class="relative overflow-hidden rounded-lg">
+                  <div
+                    class="aspect-[3/4] bg-gradient-to-b from-purple-400 via-pink-300 to-purple-500 flex items-center justify-center"
                   >
+                    <div class="text-center p-4">
+                      <div class="text-4xl mb-2">🌟</div>
+                      <div class="text-sm font-semibold">Magical Girls</div>
+                    </div>
+                  </div>
+
+                  <div class="absolute top-2 left-2">
+                    <span
+                      class="bg-green-500 text-white text-xs px-2 py-1 rounded font-semibold"
+                      >COMPLETED</span
+                    >
+                  </div>
+                  <div class="absolute top-2 right-2">
+                    <span
+                      class="bg-red-600 text-white text-xs px-2 py-1 rounded font-semibold"
+                      >TV Show</span
+                    >
+                  </div>
+
+                  <div
+                    class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 p-3"
+                  >
+                    <div class="flex justify-between items-center mb-1">
+                      <span class="text-green-400 text-sm">Completed</span>
+                      <span
+                        class="bg-orange-500 text-white text-xs px-2 py-1 rounded"
+                        >Sub</span
+                      >
+                    </div>
+                    <h3 class="text-sm font-semibold text-white">
+                      Mahoutsukai Precure!! Mirai Days
+                    </h3>
+                  </div>
                 </div>
               </div>
-              <div class="flex items-center gap-2">
-                <span
-                  class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
-                ></span>
-                <span class="text-gray-400 text-sm">MAL Score:</span>
-                <span class="text-white text-sm">{{
-                  anime.data.anime?.moreInfo.malscore
-                }}</span>
-              </div>
             </div>
-          </div>
-
-          <div class="mb-6 flex flex-wrap gap-2.5">
-            <span
-              v-for="genre in anime.data.anime?.moreInfo.genres"
-              class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full border border-[#DD8808] cursor-pointer transition-colors text-sm"
-            >
-              {{ genre }}
-            </span>
           </div>
         </div>
       </div>
-    </div>
 
-    <RightPanel />
+      <RightPanel />
+    </div>
   </div>
 </template>
