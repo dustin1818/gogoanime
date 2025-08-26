@@ -27,7 +27,7 @@ const fetchAnime = async (id) => {
     ]);
     anime.data = animeData.data;
     anime.eps = animeEps.data;
-    console.log(anime.data);
+    console.log(anime.eps);
   } catch (error) {
     console.error(error);
   } finally {
@@ -291,7 +291,9 @@ const filteredEpisodes = computed(() => {
                 v-for="episode in filteredEpisodes"
                 :key="episode.number"
               >
+              <router-link :to="`/anime-episodes/${episode.episodeId}`">
                 Episode {{ episode.number }}
+              </router-link>
               </button>
             </div>
           </div>

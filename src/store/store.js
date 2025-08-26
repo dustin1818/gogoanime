@@ -37,9 +37,19 @@ export const useGogoAnimeStore = defineStore('anime', () => {
             const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}/${id}/episodes`);
             return response.data;
         } catch (error) {
-            console.error('Fetching anime info failed', error);
+            console.error('Fetching anime episodes failed', error);
         }
     }
 
-    return {selectedGenres, isModalOpen, showGenreModal, animeData, fetchHomeInfo, fetchAnimeInfo, fetchAnimeEpisodes}
+    const fetchAnimeStreamEps = async (id) => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_ANIME_EP_URL}/sources?animeEpisodeId=${id}&server=hd-1&category=sub`);
+            return response.data
+        } catch (error) {
+            
+            console.error('Fetching anime stream episodes failed', error);
+        }
+    }
+
+    return {selectedGenres, isModalOpen, showGenreModal, animeData, fetchHomeInfo, fetchAnimeInfo, fetchAnimeEpisodes, fetchAnimeStreamEps}
 })
