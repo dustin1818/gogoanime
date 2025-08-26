@@ -111,20 +111,19 @@ onUnmounted(() => {
 
     <div class="bg-[#DD8808]">
       <div
-        class="orange-upper container mx-auto px-3 py-3 flex text-white gap-5"
+        class="orange-upper container-anime mx-auto px-3 py-3 flex text-white gap-5"
       >
-        <span>Home</span>
-        <span>Schedule</span>
-        <span>Bookmark</span>
-        <span>TV Series</span>
-        <span>Movies</span>
+        <router-link class="nav-link" to="/">Home</router-link>
+        <router-link class="nav-link" to="/">Schedule</router-link>
+        <router-link class="nav-link" to="/">TV Series</router-link>
+        <router-link class="nav-link" to="/">Movies</router-link>
       </div>
     </div>
   </header>
 </template>
 
 <style scoped>
-.orange-upper span:hover {
+.nav-link:hover {
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.1s ease;
