@@ -27,7 +27,7 @@ const fetchAnime = async (id) => {
     ]);
     anime.data = animeData.data;
     anime.eps = animeEps.data;
-    console.log(anime.eps);
+    console.log(anime.data);
   } catch (error) {
     console.error(error);
   } finally {
@@ -375,51 +375,70 @@ const filteredEpisodes = computed(() => {
           </button>
         </div>
 
-        <div class="bg-[#222222] mt-8 p-6 rounded text-white w-full font-['Poppins']">
-          <div class="max-w-7xl mx-auto">
+        <div
+          class="bg-[#222222] mt-8 p-6 rounded text-white w-full font-['Poppins']"
+        >
+          <div class="mx-auto">
             <h1 class="text-2xl font-bold mb-6">Recommended Series</h1>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              <div class="relative group cursor-pointer">
-                <div class="relative overflow-hidden rounded-lg">
-                  <div
-                    class="aspect-[3/4] bg-gradient-to-b from-purple-400 via-pink-300 to-purple-500 flex items-center justify-center"
-                  >
-                    <div class="text-center p-4">
-                      <div class="text-4xl mb-2">🌟</div>
-                      <div class="text-sm font-semibold">Magical Girls</div>
-                    </div>
-                  </div>
 
-                  <div class="absolute top-2 left-2">
-                    <span
-                      class="bg-green-500 text-white text-xs px-2 py-1 rounded font-semibold"
-                      >COMPLETED</span
-                    >
-                  </div>
-                  <div class="absolute top-2 right-2">
-                    <span
-                      class="bg-red-600 text-white text-xs px-2 py-1 rounded font-semibold"
-                      >TV Show</span
-                    >
-                  </div>
+            <div class="grid grid-cols-5 gap-3.5 p-4 font-['Poppins']">
+          <div
+            class="card cursor-pointer group relative overflow-hidden"
+            v-for="anime in anime.data.recommendedAnimes"
+            :key="anime.id"
+          >
+            <router-link :to="`/anime-info/${anime.id}`">
+              <div class="relative">
+                <img
+                  :src="anime.poster"
+                  :alt="anime.name"
+                  class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
 
+                <span
+                  class="absolute top-2 right-2 bg-[#C32F00] text-white text-xs px-2 py-0.5 rounded"
+                >
+                  {{ anime.type }} Show
+                </span>
+
+                <span
+                  class="absolute bottom-2 left-2 bg-[#0B0A0D] text-white text-xs px-2 py-0.5 rounded"
+                >
+                  Ep: {{ anime.episodes.sub }}/{{ anime.episodes.sub }}
+                </span>
+
+                <span
+                  class="absolute bottom-2 right-2 bg-[#DD8808] text-black text-xs px-2 py-0.5 rounded"
+                >
+                  Sub
+                </span>
+
+                <div
+                  class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                >
                   <div
-                    class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 p-3"
+                    class="bg-white/70 w-12 h-12 rounded-full flex items-center justify-center"
                   >
-                    <div class="flex justify-between items-center mb-1">
-                      <span class="text-green-400 text-sm">Completed</span>
-                      <span
-                        class="bg-orange-500 text-white text-xs px-2 py-1 rounded"
-                        >Sub</span
-                      >
-                    </div>
-                    <h3 class="text-sm font-semibold text-white">
-                      Mahoutsukai Precure!! Mirai Days
-                    </h3>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-6 w-6 text-black"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M6 4l10 6-10 6V4z" />
+                    </svg>
                   </div>
                 </div>
               </div>
-            </div>
+
+              <span
+                class="text-white text-center block text-xs mt-5 transition-colors duration-300 group-hover:text-[#DD8808]"
+              >
+                {{ anime.name }}
+              </span>
+            </router-link>
+          </div>
+        </div>
           </div>
         </div>
       </div>
