@@ -55,7 +55,7 @@ const props = defineProps({
         />
 
         <div class="flex flex-col">
-          <h2 class="font-['Poppins'] text-sm">{{ anime.name }}</h2>
+          <h2 class="font-['Poppins'] text-sm">{{ anime.title }}</h2>
         </div>
       </div>
     </router-link>
@@ -79,7 +79,7 @@ const props = defineProps({
         />
 
         <div class="flex flex-col">
-          <h2 class="font-['Poppins'] text-sm">{{ anime.name }}</h2>
+          <h2 class="font-['Poppins'] text-sm">{{ anime.title }}</h2>
         </div>
       </div>
     </router-link>
@@ -103,7 +103,7 @@ const props = defineProps({
         />
 
         <div class="flex flex-col">
-          <h2 class="font-['Poppins'] text-sm">{{ anime.name }}</h2>
+          <h2 class="font-['Poppins'] text-sm">{{ anime.title }}</h2>
         </div>
       </div>
     </router-link>

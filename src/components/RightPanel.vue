@@ -80,8 +80,8 @@ onMounted(async () => {
       </button>
     </div>
     
-    <Ongoing :ongoing-anime="store.animeData.data?.latestEpisodeAnimes" />
-    <Categories :categories-anime="store.animeData.data?.top10Animes" />
+    <Ongoing :ongoing-anime="store.animeData.data?.newAdded" />
+    <Categories :categories-anime="store.animeData.data?.top10" />
   </div>
 </template>
 

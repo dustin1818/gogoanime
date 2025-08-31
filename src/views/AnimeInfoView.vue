@@ -27,6 +27,7 @@ const fetchAnime = async (id) => {
     ]);
     anime.data = animeData.data;
     anime.eps = animeEps.data;
+    console.log(anime.data);
     console.log(anime.eps);
   } catch (error) {
     console.error(error);
@@ -71,13 +72,13 @@ const postComment = () => {
 };
 
 const filteredEpisodes = computed(() => {
-  if (!episodeValue.value) return anime.eps.episodes;
+  if (!episodeValue.value) return anime.eps;
 
-  return anime.eps.episodes.filter((ep) => {
+  return anime.eps.filter((ep) => {
     const query = episodeValue.value.toLowerCase().trim();
     return (
-      `episode ${ep.number}`.toLowerCase().includes(query) ||
-      ep.number.toString().includes(query)
+      `episode ${ep.episodeNumber}`.toLowerCase().includes(query) ||
+      ep.episodeNumber.toString().includes(query)
     );
   });
 });
@@ -97,7 +98,7 @@ const filteredEpisodes = computed(() => {
     <div
       class="anime-info container-anime flex items-start mx-auto gap-9 px-3 py-5"
     >
-      <Modal
+      <!-- <Modal
         :show="showModal"
         @close="closeModal"
         v-if="anime.data.anime?.info.promotionalVideos[0]?.source"
@@ -112,9 +113,9 @@ const filteredEpisodes = computed(() => {
           allowfullscreen
         >
         </iframe>
-      </Modal>
+      </Modal> -->
 
-      <template v-else>
+      <template>
         <Modal :show="showModal" @close="closeModal">
           <h1 class="font=['Poppins'] text-2xl text-center">
             No trailer at the moment
@@ -127,8 +128,8 @@ const filteredEpisodes = computed(() => {
           <div class="lg:w-50 flex-shrink-0">
             <div class="relative mb-4">
               <img
-                :src="anime.data.anime?.info.poster"
-                :alt="anime.data.anime?.info.poster"
+                :src="anime.data.poster"
+                :alt="anime.data.poster"
                 class="w-full object-center rounded-lg shadow-lg"
               />
             </div>
@@ -158,15 +159,15 @@ const filteredEpisodes = computed(() => {
 
           <div class="flex-1">
             <h1 class="text-2xl text-white font-bold mb-3">
-              {{ anime.data.anime?.info.name }}
+              {{ anime.data.title }}
             </h1>
 
             <div class="mb-8">
               <p class="text-gray-300 text-sm leading-relaxed mb-4">
-                {{ anime.data.anime?.info.description }}
+                {{ anime.data.synopsis }}
               </p>
               <p class="text-gray-400 text-sm">
-                {{ anime.data.anime?.moreInfo.japanese }}
+                {{ anime.data.japanese }}
               </p>
             </div>
 
@@ -178,7 +179,7 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">Status:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.moreInfo.status
+                    anime.data.status
                   }}</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -187,7 +188,7 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">Studio:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.moreInfo.studios
+                    anime.data.studios
                   }}</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -196,8 +197,8 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">Released:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.moreInfo.aired
-                  }}</span>
+                    anime.data.aired?.from
+                  }} - {{ anime.data.aired?.to }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span
@@ -205,7 +206,7 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">Duration:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.moreInfo.duration
+                    anime.data.duration
                   }}</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -214,7 +215,7 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">Season:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.moreInfo.premiered
+                    anime.data.premiered
                   }}</span>
                 </div>
               </div>
@@ -226,7 +227,7 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">Type:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.info.stats.type
+                    anime.data.type
                   }}</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -235,7 +236,7 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">Episodes:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.info.stats.episodes.sub
+                    anime.data.episodes?.sub
                   }}</span>
                 </div>
                 <div class="flex items-center gap-2">
@@ -246,7 +247,7 @@ const filteredEpisodes = computed(() => {
                   <div class="flex flex-wrap gap-2 text-sm">
                     <span
                       class="text-white"
-                      v-for="producer in anime.data.anime?.moreInfo.producers"
+                      v-for="producer in anime.data.producers"
                       >{{ producer }},</span
                     >
                   </div>
@@ -257,7 +258,7 @@ const filteredEpisodes = computed(() => {
                   ></span>
                   <span class="text-gray-400 text-sm">MAL Score:</span>
                   <span class="text-white text-sm">{{
-                    anime.data.anime?.moreInfo.malscore
+                    anime.data.MAL_score
                   }}</span>
                 </div>
               </div>
@@ -265,7 +266,7 @@ const filteredEpisodes = computed(() => {
 
             <div class="mb-6 flex flex-wrap gap-2.5">
               <span
-                v-for="genre in anime.data.anime?.moreInfo.genres"
+                v-for="genre in anime.data.genres"
                 class="inline-block bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-full border border-[#DD8808] cursor-pointer transition-colors text-sm"
               >
                 {{ genre }}
@@ -291,8 +292,8 @@ const filteredEpisodes = computed(() => {
                 v-for="episode in filteredEpisodes"
                 :key="episode.number"
               >
-              <router-link :to="`/anime-episodes/${episode.episodeId}`">
-                Episode {{ episode.number }}
+              <router-link :to="`/anime-episodes/${episode.id}`">
+                Episode {{ episode.episodeNumber }}
               </router-link>
               </button>
             </div>
@@ -386,7 +387,7 @@ const filteredEpisodes = computed(() => {
             <div class="grid grid-cols-5 gap-3.5 p-4 font-['Poppins']">
           <div
             class="card cursor-pointer group relative overflow-hidden"
-            v-for="anime in anime.data.recommendedAnimes"
+            v-for="anime in anime.data.recommended"
             :key="anime.id"
           >
             <router-link :to="`/anime-info/${anime.id}`">

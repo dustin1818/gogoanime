@@ -38,7 +38,7 @@ const props = defineProps({
               />
             </svg>
             <span class="text-xs fira-sans group-hover:text-yellow-400">{{
-              ongoing.name
+              ongoing.title
             }}</span>
           </div>
 

@@ -13,11 +13,11 @@ const videoRef = ref(null);
 const episodes = reactive({})
 
 onMounted(async () => {
- const routeId = route.params.episodeId + '?ep=' + route.query.ep; 
- console.log(await store.fetchAnimeStreamEps(routeId))
- episodes.data = await  store.fetchAnimeStreamEps(routeId)
+ const routeId = route.params.title; 
+ episodes.data = await store.fetchAnimeStreamEps(routeId)
+ console.log(episodes.data.data)
 
-  src.value = episodes.data.data.sources?.[0].url;
+  src.value = episodes.data.data.link.file;
  if (videoRef.value) {
     if (Hls.isSupported()) {
       const hls = new Hls();
@@ -33,7 +33,7 @@ onMounted(async () => {
 
 <template>
     <h1>Stream page</h1>
-      
+
     <video ref="videoRef" controls autoplay class="w-full rounded-lg"></video>
 
     <span class="text-white"> {{ src }}</span>

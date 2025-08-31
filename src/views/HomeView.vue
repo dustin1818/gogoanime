@@ -30,7 +30,7 @@ const carouselConfig = {
         :mouse-drag="true"
         :touch-drag="true"
       >
-        <Slide v-for="anime in store.animeData.data?.spotlightAnimes" :key="anime.id">
+        <Slide v-for="anime in store.animeData.data?.spotlight" :key="anime.id">
           <div class="carousel__item">
             <div class="card flex text-white gap-3">
               <div class="card-img relative w-full">
@@ -39,12 +39,12 @@ const carouselConfig = {
                 <div
                   class="anime-description flex flex-col gap-2 absolute bottom-10 right-50 bg-[#0B0A0D] p-2 rounded"
                 >
-                  <h3 class="title text-xl">{{ anime.name }}</h3>
+                  <h3 class="title text-xl">{{ anime.title }}</h3>
                   <p class="date text-[#FFC107] text-sm">
-                    {{ anime.otherInfo[2] }} TO ?
+                    {{ anime.aired }}
                   </p>
                   <p class="text-sm">Summary:</p>
-                  <p class="summary text-sm">{{ anime.description }}</p>
+                  <p class="summary text-sm">{{ anime.synopsis }}</p>
 
                   <p class="text-[#FFC107] text-sm">Status: Ongoing</p>
                   <p class="text-sm">Type: {{ anime.type }}</p>
@@ -60,20 +60,20 @@ const carouselConfig = {
         </template>
       </Carousel>
 
-      <div class="h-screen bg-[#222222] mt-6">
+      <div class="bg-[#222222] mt-6">
         <div
           class="orange-border text-white bg-[#DD8808] p-2 px-4 rounded-tr rounded-tl font-['Poppins'] flex justify-between items-center"
         >
-          <span class="font-semibold">Top airing</span>
+          <span class="font-semibold">Newly Added</span>
           <span
             class="text-xs border bg-[#222222] border-[#222222] p-1 cursor-pointer"
             >VIEW ALL</span
           >
         </div>
-        <div class="grid grid-cols-5 gap-3.5 p-4 font-['Poppins']">
+        <div class="grid grid-cols-6 gap-3.5 p-4 font-['Poppins']">
           <div
             class="card cursor-pointer group relative overflow-hidden"
-            v-for="anime in store.animeData.data?.topAiringAnimes"
+            v-for="anime in store.animeData.data?.newAdded"
             :key="anime.id"
           >
             <router-link :to="`/anime-info/${anime.id}`">

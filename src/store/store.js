@@ -34,7 +34,7 @@ export const useGogoAnimeStore = defineStore('anime', () => {
 
     const fetchAnimeEpisodes = async (id) => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}/${id}/episodes`);
+            const response = await axios.get(`${import.meta.env.VITE_ANIME_EP_URL}s/${id}`);
             return response.data;
         } catch (error) {
             console.error('Fetching anime episodes failed', error);
@@ -43,7 +43,7 @@ export const useGogoAnimeStore = defineStore('anime', () => {
 
     const fetchAnimeStreamEps = async (id) => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_ANIME_EP_URL}/sources?animeEpisodeId=${id}&server=hd-1&category=sub`);
+            const response = await axios.get(`${import.meta.env.VITE_ANIME_STREAM_URL}?server=HD-1&type=sub&id=${id}`);
             return response.data
         } catch (error) {
             
