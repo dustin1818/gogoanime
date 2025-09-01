@@ -43,7 +43,7 @@ export const useGogoAnimeStore = defineStore('anime', () => {
 
     const fetchAnimeStreamEps = async (id) => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_ANIME_STREAM_URL}?server=HD-1&type=sub&id=${id}`);
+            const response = await axios.get(`${import.meta.env.VITE_ANIME_STREAM_URL}?server=HD-2&type=sub&id=${id}`);
             return response.data
         } catch (error) {
             
