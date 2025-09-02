@@ -8,7 +8,6 @@ API = https://aniwatch-steel.vercel.app/
 
 
 Things to do:
--  Use HD 2 and https://hls-proxy-m3u8.vercel.app/ to access video
-- Make video stream work
 - Add different server
-- Update frontend layout for anime stream page 
+- Update frontend layout for anime stream page
+- Add search anime view
