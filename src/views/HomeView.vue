@@ -23,7 +23,7 @@ const carouselConfig = {
 <template>
   <Navbar />
   <main class="container-anime flex flex-col-reverse md:flex-row mx-auto py-5 gap-4">
-    <div class="left-main w-[1500px]">
+    <div class="left-main w-full lg:w-[1500px]">
       <Carousel
         v-bind="carouselConfig"
         :autoplay="3000"
