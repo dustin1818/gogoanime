@@ -2,9 +2,7 @@
 import { defineProps } from "vue";
 
 const props = defineProps({
-  ongoingAnime: {
-    type: Array,
-  },
+  ongoingAnime: Array,
 });
 </script>
 

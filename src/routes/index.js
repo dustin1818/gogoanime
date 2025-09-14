@@ -18,7 +18,8 @@ const routes = [
     {
         path:'/anime-episodes/:title',
         component: AnimeStreamView
-    }
+    },
+   
 ]
 
 export const router = createRouter({

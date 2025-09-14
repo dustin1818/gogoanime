@@ -1,55 +1,90 @@
-import { defineStore } from 'pinia'
-import axios from 'axios'
-import { ref } from 'vue'
+import { defineStore } from "pinia";
+import axios from "axios";
+import { ref } from "vue";
 
-export const useGogoAnimeStore = defineStore('anime', () => {
+export const useGogoAnimeStore = defineStore("anime", () => {
+  const animeData = ref([]);
+  const selectedGenres = ref([]);
+  const isModalOpen = ref(false);
+  const episodeData = ref([]);
+  const currentAnimeId = ref(null);
 
-    const animeData = ref([]);
+  const showGenreModal = () => {
+    isModalOpen.value = true;
+  };
 
-    const selectedGenres = ref([]);
-    const isModalOpen = ref(false);
-
-    const showGenreModal = () => {
-        isModalOpen.value = true;
-      };
-    
-    const fetchHomeInfo = async () => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_HOME_API_URL}`);
-            animeData.value = response.data;
-            return animeData.value
-        } catch (error) {
-            console.error('Fetching home info failed', error);
-        }
+  const setCurrentAnimeId = (id) => {
+    if (currentAnimeId.value !== id) {
+      currentAnimeId.value = id;
     }
+  };
 
-    const fetchAnimeInfo = async (id) => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}/${id}`);
-            return response.data;
-        } catch (error) {
-            console.error('Fetching anime info failed', error);
-        }
+  const fetchHomeInfo = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_HOME_API_URL}`);
+      animeData.value = response.data;
+      return animeData.value;
+    } catch (error) {
+      console.error("Fetching home info failed", error);
     }
+  };
 
-    const fetchAnimeEpisodes = async (id) => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_ANIME_EP_URL}s/${id}`);
-            return response.data;
-        } catch (error) {
-            console.error('Fetching anime episodes failed', error);
-        }
+  const fetchAnimeInfo = async (id) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_ANIME_URL}/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fetching anime info failed", error);
     }
+  };
 
-    const fetchAnimeStreamEps = async (id) => {
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_ANIME_STREAM_URL}?server=HD-2&type=sub&id=${id}`);
-            return response.data
-        } catch (error) {
-            
-            console.error('Fetching anime stream episodes failed', error);
-        }
+  const fetchAnimeEpisodes = async (id) => {
+    try {
+      episodeData.value = [];
+      const response = await axios.get(
+        `${import.meta.env.VITE_ANIME_EP_URL}s/${id}`
+      );
+      episodeData.value = response.data;
+      return episodeData.value;
+    } catch (error) {
+      console.error("Fetching anime episodes failed", error);
     }
+  };
 
-    return {selectedGenres, isModalOpen, showGenreModal, animeData, fetchHomeInfo, fetchAnimeInfo, fetchAnimeEpisodes, fetchAnimeStreamEps}
-})
+  const fetchAnimeStreamEps = async (id) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_ANIME_STREAM_URL}?server=HD-2&type=sub&id=${id}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fetching anime stream episodes failed", error);
+    }
+  };
+
+  const fetchSearchResults = async (query) => {
+    try {
+        const response = await axios.get(`${import.meta.env.VITE_ANIME_SEARCH_URL}?keyword=${query}&page=1`)
+        return response.data;
+    } catch (error) {
+        console.error("Fetching anime search results failed", error)
+    }
+  };
+
+  return {
+    selectedGenres,
+    isModalOpen,
+    showGenreModal,
+    animeData,
+    fetchHomeInfo,
+    fetchAnimeInfo,
+    fetchAnimeEpisodes,
+    fetchAnimeStreamEps,
+    episodeData,
+    currentAnimeId,
+    setCurrentAnimeId,
+    fetchSearchResults
+  };
+});

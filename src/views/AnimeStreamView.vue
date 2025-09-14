@@ -4,6 +4,7 @@ import { useGogoAnimeStore } from "../store/store";
 import { useRoute } from "vue-router";
 import RightPanel from "@/components/RightPanel.vue";
 import Navbar from "@/components/Navbar.vue";
+import Episodes from "@/components/Episodes.vue";
 import Hls from "hls.js";
 
 const route = useRoute();
@@ -91,17 +92,21 @@ onBeforeUnmount(() => {
   <Navbar />
 
   <div class="container-anime flex justify-between mx-auto items-start gap-8 mt-10">
-    <video ref="videoRef" controls autoplay class="h-[630px] rounded-lg" crossorigin="anonymous">
-      <track
-        v-for="(track, index) in subtitles"
-        :key="index"
-        kind="subtitles"
-        :src="track.processedUrl || track.file"
-        :label="track.label"
-        :srclang="track.lang"
-        :default="track.label === 'English'"
-      />
-    </video>
+    <div class="left-panel">
+      <video ref="videoRef" controls autoplay class="h-auto w-[800px] rounded-lg" crossorigin="anonymous">
+        <track
+          v-for="(track, index) in subtitles"
+          :key="index"
+          kind="subtitles"
+          :src="track.processedUrl || track.file"
+          :label="track.label"
+          :srclang="track.lang"
+          :default="track.label === 'English'"
+        />
+      </video>
+
+      <Episodes />
+    </div>
     
     <RightPanel/>
   </div>

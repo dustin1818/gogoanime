@@ -11,9 +11,7 @@ const selectTab = (tab) => {
 };
 
 const props = defineProps({
-  categoriesAnime: {
-    type: Array,
-  },
+  categoriesAnime: Array,
 });
 </script>
 

@@ -1,9 +1,13 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
+import { useGogoAnimeStore } from "../store/store";
+import Swal from "sweetalert2";
 
 const isMobileMenuOpen = ref(false);
-const searchQuery = ref("");
-const mobileSearchQuery = ref("");
+const hasSearchResults = ref(false);
+const searchResults = ref([]);
+const store = useGogoAnimeStore();
+let delayResult;
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -14,7 +18,13 @@ const closeMobileMenu = () => {
 };
 
 const handleLogin = () => {
-  console.log("Login clicked");
+  Swal.fire({
+    title: "Bookmark Page",
+    text: "Login to GoGoanime?",
+    icon: "question",
+    confirmButtonText: "Confirm",
+    confirmButtonColor: "#DD8808",
+  });
 };
 
 const handleClickOutside = (event) => {
@@ -30,9 +40,28 @@ const handleResize = () => {
   }
 };
 
+const handleInput = async (e) => {
+  const query = e.target.value.trim();
+
+  clearTimeout(delayResult)
+
+  if (!query) {
+    hasSearchResults.value = false;
+    searchResults.value = [];
+    return;
+  }
+
+  delayResult = setTimeout(async () => {
+    const results = await store.fetchSearchResults(query);
+    searchResults.value = results;
+    hasSearchResults.value = results?.data.response?.length > 0;
+  }, 300);
+};
+
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
   window.addEventListener("resize", handleResize);
+  console.log(hasSearchResults.value);
 });
 
 onUnmounted(() => {
@@ -49,13 +78,28 @@ onUnmounted(() => {
       <div class="flex items-center gap-8">
         <img class="w-auto h-11" src="../assets/logo.png" alt="Logo" />
 
-        <div class="search-input hidden md:block">
+        <div class="search-input hidden md:block relative">
           <input
             class="w-[350px] border border-[#23202A] bg-[#17151B] text-white px-5 py-2 rounded placeholder-white text-sm focus:outline-none focus:border-[#DD8808]"
             type="text"
             placeholder="Search..."
-            v-model="searchQuery"
+            @input="handleInput"
           />
+
+          <div
+            v-if="hasSearchResults"
+            class="search-results bg-[#17151B] text-white px-5 py-2 absolute w-full z-50 flex flex-col gap-1"
+          >
+            
+            <router-link
+              v-for="searchResult in searchResults.data?.response"
+              :key="searchResult.id"
+              class="cursor-pointer"
+              :to="`/anime-info/${searchResult.id}`"
+            >
+              {{ searchResult.title }}
+            </router-link>
+          </div>
         </div>
       </div>
 
@@ -97,7 +141,6 @@ onUnmounted(() => {
           class="w-full border border-[#23202A] bg-[#17151B] text-white px-5 py-1.5 rounded placeholder-white text-sm focus:outline-none focus:border-[#DD8808]"
           type="text"
           placeholder="Search..."
-          v-model="mobileSearchQuery"
         />
       </div>
 
