@@ -82,7 +82,7 @@ const postComment = () => {
     <Navbar />
 
     <div
-      class="anime-info container-anime flex items-start mx-auto gap-9 px-3 py-5"
+      class="anime-info container-anime flex flex-col md:flex-row items-start justify-start mx-auto gap-9 px-3 py-5"
     >
       <!-- <Modal
         :show="showModal"
@@ -110,7 +110,7 @@ const postComment = () => {
       </template>
 
       <div class="flex flex-col items-start basis-[1700px]">
-        <div class="flex gap-8 bg-[#222222] rounded p-6 font-['Poppins']">
+        <div class="flex flex-col md:flex-row gap-8 bg-[#222222] rounded p-6 font-['Poppins']">
           <div class="lg:w-50 flex-shrink-0">
             <div class="relative mb-4">
               <img
@@ -347,7 +347,7 @@ const postComment = () => {
           <div class="mx-auto">
             <h1 class="text-2xl font-bold mb-6">Recommended Series</h1>
 
-            <div class="grid grid-cols-5 gap-3.5 p-4 font-['Poppins']">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 p-4 font-['Poppins']">
           <div
             class="card cursor-pointer group relative overflow-hidden"
             v-for="anime in anime.data.recommended"

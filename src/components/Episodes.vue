@@ -57,7 +57,7 @@ watch(() => store.currentAnimeId, async (newId, oldId) => {
       />
     </div>
     <div class="p-4 bg-[#1A1A1A] text-white">
-      <div class="grid grid-cols-5 gap-2">
+      <div class="grid grid-cols-3 md:grid-cols-5 gap-4">
         <button
           class="rounded-md border border-gray-400 bg-[#3B3B3B] px-4 py-2 hover:bg-[#3b3b3bef] hover:text-[#DD8808]"
           v-for="episode in filteredEpisodes"

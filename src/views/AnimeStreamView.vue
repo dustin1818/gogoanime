@@ -57,7 +57,6 @@ async function processSubtitleTracks(tracks) {
 onMounted(async () => {
   const routeId = route.params.title;
   episodes.data = await store.fetchAnimeStreamEps(routeId);
-  console.log(episodes.data.data);
 
   const data = episodes.data.data;
   const originalUrl = data.link.file;
@@ -91,9 +90,9 @@ onBeforeUnmount(() => {
 <template>
   <Navbar />
 
-  <div class="container-anime flex justify-between mx-auto items-start gap-8 mt-10">
+  <div class="container-anime flex-col md:flex-row justify-between mx-auto items-start gap-8 mt-10">
     <div class="left-panel">
-      <video ref="videoRef" controls autoplay class="h-auto w-[800px] rounded-lg" crossorigin="anonymous">
+      <video ref="videoRef" controls autoplay class="h-[450px] md:h-auto w-full md:w-[800px] rounded-lg" crossorigin="anonymous">
         <track
           v-for="(track, index) in subtitles"
           :key="index"

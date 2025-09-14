@@ -15,7 +15,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="right-main w-[650px]">
+  <div class="right-main w-auto md:w-[650px]">
     <div class="border border-[#222222] rounded bg-[#222222] p-3">
       <div
         class="font-['Poppins'] flex items-center justify-center gap-1 border border-[#333333] rounded bg-[#333333] text-white text-center text-sm p-3 cursor-pointer"
