@@ -22,7 +22,7 @@ const carouselConfig = {
 
 <template>
   <Navbar />
-  <main class="container-anime flex flex-col-reverse md:flex-row mx-auto py-5 gap-4">
+  <main class="container-anime flex flex-col md:flex-row mx-auto py-5 gap-4">
     <div class="left-main w-full lg:w-[1500px]">
       <Carousel
         v-bind="carouselConfig"
@@ -34,7 +34,7 @@ const carouselConfig = {
           <div class="carousel__item">
             <div class="card flex text-white gap-3">
               <div class="card-img relative w-full">
-                <img class="h-auto" :src="anime.poster" alt="" />
+                <img class="h-[350px] object-contain object-center lg:h-auto" :src="anime.poster" alt="" />
 
                 <div
                   class="anime-description hidden md:flex flex-col gap-2 absolute bottom-10 right-50 bg-[#0B0A0D] p-2 rounded"
