@@ -136,13 +136,29 @@ onUnmounted(() => {
       class="md:hidden bg-[#17151B] border-t border-[#23202A] px-3 py-5 flex flex-col gap-5 transition-all duration-300 overflow-hidden"
       :class="isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'"
     >
-      <div class="mobile-search-input">
-        <input
-          class="w-full border border-[#23202A] bg-[#17151B] text-white px-5 py-1.5 rounded placeholder-white text-sm focus:outline-none focus:border-[#DD8808]"
-          type="text"
-          placeholder="Search..."
-        />
-      </div>
+    <div class="search-input relative">
+          <input
+            class="w-[350px] border border-[#23202A] bg-[#17151B] text-white px-5 py-2 rounded placeholder-white text-sm focus:outline-none focus:border-[#DD8808]"
+            type="text"
+            placeholder="Search..."
+            @input="handleInput"
+          />
+
+          <div
+            v-if="hasSearchResults"
+            class="search-results bg-[#17151B] text-white px-5 py-2 absolute w-full z-50 flex flex-col gap-1"
+          >
+            
+            <router-link
+              v-for="searchResult in searchResults.data?.response"
+              :key="searchResult.id"
+              class="cursor-pointer"
+              :to="`/anime-info/${searchResult.id}`"
+            >
+              {{ searchResult.title }}
+            </router-link>
+          </div>
+        </div>
 
       <button
         class="text-white bg-[#DD8808] hover:bg-[#c47807] px-5 py-3 uppercase rounded transition-colors duration-300 self-start"
