@@ -21,7 +21,7 @@ onMounted(async () => {
         class="font-['Poppins'] flex items-center justify-center gap-1 border border-[#333333] rounded bg-[#333333] text-white text-center text-sm p-3 cursor-pointer"
         @click="store.showGenreModal"
       >
-        Genre all
+        Genre {{store.selectedGenres.length > 0 ? store.selectedGenres.length + ' selected' : 'All'  }}
         <svg
           width="18"
           height="18"
