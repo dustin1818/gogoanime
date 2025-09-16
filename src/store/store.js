@@ -73,6 +73,24 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     }
   };
 
+  const fetchMoviesAnime = async (number) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/movie?page=${number}`)
+      return response.data
+    } catch (error) {
+        console.error("Fetching anime movies failed", error)
+    }
+  }
+
+  const fetchSeriesAnime = async (number) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/tv?page=${number}`)
+      return response.data
+    } catch (error) {
+        console.error("Fetching anime series failed", error)
+    }
+  }
+
   return {
     selectedGenres,
     isModalOpen,
@@ -85,6 +103,8 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     episodeData,
     currentAnimeId,
     setCurrentAnimeId,
-    fetchSearchResults
+    fetchSearchResults,
+    fetchMoviesAnime,
+    fetchSeriesAnime
   };
 });

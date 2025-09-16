@@ -19,8 +19,8 @@ const closeMobileMenu = () => {
 
 const handleLogin = () => {
   Swal.fire({
-    title: "Bookmark Page",
-    text: "Login to GoGoanime?",
+    title: "Login Page",
+    text: "Register to myanimelist.com",
     icon: "question",
     confirmButtonText: "Confirm",
     confirmButtonColor: "#DD8808",
@@ -61,7 +61,6 @@ const handleInput = async (e) => {
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
   window.addEventListener("resize", handleResize);
-  console.log(hasSearchResults.value);
 });
 
 onUnmounted(() => {
@@ -176,8 +175,8 @@ onUnmounted(() => {
       >
         <router-link class="nav-link" to="/">Home</router-link>
         <router-link class="nav-link" to="/">Schedule</router-link>
-        <router-link class="nav-link" to="/">TV Series</router-link>
-        <router-link class="nav-link" to="/">Movies</router-link>
+        <router-link class="nav-link" to="/anime/series">TV Series</router-link>
+        <router-link class="nav-link" to="/anime/movies">Movies</router-link>
       </div>
     </div>
   </header>

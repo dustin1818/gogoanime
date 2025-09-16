@@ -5,22 +5,22 @@ import Navbar from "@/components/Navbar.vue";
 import RightPanel from "@/components/RightPanel.vue";
 
 const store = useGogoAnimeStore();
-const seriesData = ref([]);
+const movieData = ref([]);
 const currentPage = ref(1);
 
 onMounted(async () => {
-  seriesData.value = await store.fetchSeriesAnime(currentPage.value);
+  movieData.value = await store.fetchMoviesAnime(currentPage.value);
 });
 
 const nextPage = async () => {
   currentPage.value += 1;
-  seriesData.value = await store.fetchSeriesAnime(currentPage.value);
+  movieData.value = await store.fetchMoviesAnime(currentPage.value);
 };
 
 const prevPage = async () => {
   if (currentPage.value > 1) {
     currentPage.value -= 1;
-    seriesData.value = await store.fetchSeriesAnime(currentPage.value);
+    movieData.value = await store.fetchMoviesAnime(currentPage.value);
   }
 };
 </script>
@@ -34,14 +34,14 @@ const prevPage = async () => {
         <div
           class="orange-border text-white bg-[#DD8808] p-2 px-4 rounded-tr rounded-tl font-['Poppins'] flex justify-between items-center"
         >
-          <span class="font-semibold">Series</span>
+          <span class="font-semibold">Movies</span>
         </div>
         <div
           class="grid grid-cols-2 md:grid-cols-6 gap-3.5 p-4 font-['Poppins']"
         >
           <div
             class="card cursor-pointer group relative overflow-hidden"
-            v-for="anime in seriesData.data?.response"
+            v-for="anime in movieData.data?.response"
             :key="anime.id"
           >
             <router-link :to="`/anime-info/${anime.id}`">

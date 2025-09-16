@@ -347,7 +347,7 @@ const postComment = () => {
           <div class="mx-auto">
             <h1 class="text-2xl font-bold mb-6">Recommended Series</h1>
 
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 p-4 font-['Poppins']">
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-3.5 p-4 font-['Poppins']">
           <div
             class="card cursor-pointer group relative overflow-hidden"
             v-for="anime in anime.data.recommended"
