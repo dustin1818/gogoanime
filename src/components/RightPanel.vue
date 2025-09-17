@@ -57,6 +57,7 @@ onMounted(async () => {
         </div>
       </Modal>
 
+      <router-link to="/anime/search">
       <button
         class="flex items-center justify-center gap-1 p-2 mt-4 rounded w-full text-white text-sm text-center bg-[#DD8808]"
       >
@@ -78,6 +79,7 @@ onMounted(async () => {
 
         Search
       </button>
+    </router-link>
     </div>
     
     <Ongoing :ongoing-anime="store.animeData.data?.newAdded" />

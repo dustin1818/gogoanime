@@ -4,6 +4,7 @@ import AnimeInfoView from "../views/AnimeInfoView.vue";
 import AnimeStreamView from "../views/AnimeStreamView.vue";
 import MoviesView from "../views/MoviesView.vue"
 import SeriesView from "../views/SeriesView.vue";
+import SearchView from "../views/SearchView.vue"
 
 const routes = [
     {
@@ -27,6 +28,10 @@ const routes = [
     {
         path: '/anime/series',
         component: SeriesView
+    },
+    {
+        path:'/anime/search',
+        component: SearchView
     }
    
 ]
