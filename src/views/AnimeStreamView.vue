@@ -92,7 +92,7 @@ onBeforeUnmount(() => {
 
   <div class="container-anime flex flex-col md:flex-row justify-between mx-auto items-start gap-8 mt-10">
     <div class="left-panel">
-      <video ref="videoRef" controls autoplay class="h-[450px] md:h-auto w-full md:w-[800px] rounded-lg" crossorigin="anonymous">
+      <video ref="videoRef" controls autoplay class="h-[450px] md:h-auto w-full md:w-[1200px] rounded-lg" crossorigin="anonymous">
         <track
           v-for="(track, index) in subtitles"
           :key="index"
@@ -104,7 +104,8 @@ onBeforeUnmount(() => {
         />
       </video>
 
-      <Episodes />
+      <button class="text-white">Next</button>
+      <button>Prev</button>
     </div>
     
     <RightPanel/>
