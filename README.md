@@ -8,6 +8,7 @@ API = https://aniwatch-steel.vercel.app/
 
 
 Things to do:
-- Add different server
-- Update frontend layout for anime stream page
-- Add search anime view
+- fix when reload episode list is gone
+- add recommentation in anime stream page
+- add search genre page
+
