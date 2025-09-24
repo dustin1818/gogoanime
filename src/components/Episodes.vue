@@ -1,7 +1,9 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useGogoAnimeStore } from "../store/store";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const store = useGogoAnimeStore();
 const episodeValue = ref("");
 const isLoading = ref(false);
@@ -18,25 +20,38 @@ const filteredEpisodes = computed(() => {
   });
 });
 
-onMounted(async () => {
+const saveEp = (epNumber) => {
+  localStorage.setItem("epNumber", epNumber);
+};
+
+const loadEpisodes = async () => {
+  if (!store.currentAnimeId) return;
+  
   try {
     isLoading.value = true;
-    if (store.currentAnimeId) {
     await store.fetchAnimeEpisodes(store.currentAnimeId);
-  }
   } catch (error) {
-    console.error(error)
+    console.error('Failed to load episodes:', error);
   } finally {
     isLoading.value = false;
   }
-  
+};
+
+onMounted(async () => {
+  await loadEpisodes();
 });
 
 watch(() => store.currentAnimeId, async (newId, oldId) => {
   if (newId && newId !== oldId) {
-    await store.fetchAnimeEpisodes(newId);
+    await loadEpisodes();
   }
 }, { immediate: false });
+
+watch(() => route.params, () => {
+  if (!store.episodeData?.data?.length) {
+    loadEpisodes();
+  }
+}, { deep: true });
 </script>
 
 <template class="bg-gray-900">
@@ -57,11 +72,16 @@ watch(() => store.currentAnimeId, async (newId, oldId) => {
       />
     </div>
     <div class="p-4 bg-[#1A1A1A] text-white">
-      <div class="grid grid-cols-3 md:grid-cols-5 gap-4">
+      <div v-if="!filteredEpisodes?.length" class="text-center text-gray-400 py-4">
+        No episodes available
+      </div>
+      <div v-else class="grid grid-cols-3 md:grid-cols-5 gap-4">
         <button
           class="rounded-md border border-gray-400 bg-[#3B3B3B] px-4 py-2 hover:bg-[#3b3b3bef] hover:text-[#DD8808]"
+          :class="{ 'bg-[#DD8808] text-white': route.params.title === episode.id }"
           v-for="episode in filteredEpisodes"
           :key="episode.number"
+          @click="saveEp(episode.episodeNumber)"
         >
           <router-link :to="`/anime-episodes/${episode.id}`">
             Episode {{ episode.episodeNumber }}
@@ -70,6 +90,4 @@ watch(() => store.currentAnimeId, async (newId, oldId) => {
       </div>
     </div>
   </div>
-
-
 </template>

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, onBeforeUnmount } from "vue";
+import { onMounted, reactive, ref, onBeforeUnmount, watch, nextTick } from "vue";
 import { useGogoAnimeStore } from "../store/store";
 import { useRoute } from "vue-router";
 import RightPanel from "@/components/RightPanel.vue";
@@ -13,6 +13,7 @@ const src = ref("");
 const videoRef = ref(null);
 const episodes = reactive({});
 const subtitles = ref([]);
+let hls = null;
 
 function getProxiedUrl(originalUrl, forceProxy = false) {
   if (!forceProxy && (originalUrl.includes('.vtt') || originalUrl.includes('subtitle'))) {
@@ -54,8 +55,38 @@ async function processSubtitleTracks(tracks) {
   return processedTracks;
 }
 
-onMounted(async () => {
-  const routeId = route.params.title;
+function updateSubtitleTracks() {
+  if (!videoRef.value) return;
+  const existingTracks = videoRef.value.querySelectorAll('track');
+  existingTracks.forEach(track => track.remove());
+  
+  subtitles.value.forEach((track, index) => {
+    const trackElement = document.createElement('track');
+    trackElement.kind = 'subtitles';
+    trackElement.src = track.processedUrl || track.file;
+    trackElement.label = track.label;
+    trackElement.srclang = track.lang || 'en';
+    
+    if (track.label === 'English') {
+      trackElement.default = true;
+    }
+    
+    videoRef.value.appendChild(trackElement);
+  });
+}
+
+async function loadEpisode(routeId) {
+  if (hls) {
+    hls.destroy();
+    hls = null;
+  }
+
+  subtitles.value.forEach(track => {
+    if (track.processedUrl && track.processedUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(track.processedUrl);
+    }
+  });
+
   episodes.data = await store.fetchAnimeStreamEps(routeId);
 
   const data = episodes.data.data;
@@ -65,20 +96,43 @@ onMounted(async () => {
   if (data.tracks && data.tracks.length > 0) {
     const subtitleTracks = data.tracks.filter(track => track.kind !== 'thumbnails');
     subtitles.value = await processSubtitleTracks(subtitleTracks);
+  } else {
+    subtitles.value = [];
   }
 
   if (videoRef.value) {
+    await nextTick();
+    updateSubtitleTracks();
+    
     if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls?.loadSource(src.value);
-      hls?.attachMedia(videoRef.value);
+      hls = new Hls();
+      hls.loadSource(src.value);
+      hls.attachMedia(videoRef.value);
+      
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        updateSubtitleTracks();
+      });
     } else if (videoRef.value.canPlayType("application/vnd.apple.mpegurl")) {
       videoRef.value.src = src.value;
     }
   }
-});
+}
+
+watch(
+  () => route.params.title,
+  (newEpisodeId, oldEpisodeId) => {
+    if (newEpisodeId && newEpisodeId !== oldEpisodeId) {
+      loadEpisode(newEpisodeId);
+    }
+  },
+  { immediate: true }
+);
 
 onBeforeUnmount(() => {
+  if (hls) {
+    hls.destroy();
+  }
+  
   subtitles.value.forEach(track => {
     if (track.processedUrl && track.processedUrl.startsWith('blob:')) {
       URL.revokeObjectURL(track.processedUrl);
@@ -95,7 +149,7 @@ onBeforeUnmount(() => {
       <video ref="videoRef" controls autoplay class="h-[450px] md:h-auto w-full md:w-[1200px] rounded-lg" crossorigin="anonymous">
         <track
           v-for="(track, index) in subtitles"
-          :key="index"
+          :key="`${route.params.title}-${index}`"
           kind="subtitles"
           :src="track.processedUrl || track.file"
           :label="track.label"
@@ -104,8 +158,7 @@ onBeforeUnmount(() => {
         />
       </video>
 
-      <button class="text-white">Next</button>
-      <button>Prev</button>
+      <Episodes />
     </div>
     
     <RightPanel/>
