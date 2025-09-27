@@ -358,7 +358,7 @@ const postComment = () => {
                 <img
                   :src="anime.poster"
                   :alt="anime.name"
-                  class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
 
                 <span
@@ -398,9 +398,9 @@ const postComment = () => {
               </div>
 
               <span
-                class="text-white text-center block text-xs mt-5 transition-colors duration-300 group-hover:text-[#DD8808]"
+                class="text-white text-center block text-xs mt-2 mb-5 transition-colors duration-300 group-hover:text-[#DD8808]"
               >
-                {{ anime.name }}
+                {{ anime.title }}
               </span>
             </router-link>
           </div>

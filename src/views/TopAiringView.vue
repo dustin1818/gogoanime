@@ -49,7 +49,7 @@ const prevPage = async () => {
                 <img
                   :src="anime.poster"
                   :alt="anime.name"
-                  class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
 
                 <span

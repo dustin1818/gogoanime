@@ -14,9 +14,8 @@ onMounted(() => {
   <Navbar />
 
   <div
-    class="container-anime flex flex-col md:flex-row justify-between mx-auto items-start gap-8 mt-10"
+    class="container-anime gap-8 mt-10 w-full mx-auto"
   >
-    <div class="left-panel"></div>
-
+  <div class="text-white text-2xl text-center w-full">Feature not yet released...</div>
   </div>
 </template>
