@@ -109,6 +109,15 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     }
   }
 
+  const fetchRecentlyAddedAnime = async (number) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/recently-added?page=${number}`)
+      return response.data
+    } catch (error) {
+        console.error("Fetching recently added anime failed", error)
+    }
+  }
+
   return {
     selectedGenres,
     isModalOpen,
@@ -126,5 +135,6 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     fetchSeriesAnime,
     fetchPopularAnime,
     fetchTopAiringAnime,
+    fetchRecentlyAddedAnime
   };
 });

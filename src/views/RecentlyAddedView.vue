@@ -1,80 +1,47 @@
 <script setup>
-import {onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useGogoAnimeStore } from "../store/store";
-import "vue3-carousel/carousel.css";
-import { Carousel, Slide, Pagination, Navigation } from "vue3-carousel";
-import RightPanel from "../components/RightPanel.vue"
 import Navbar from "@/components/Navbar.vue";
+import RightPanel from "@/components/RightPanel.vue";
 
 const store = useGogoAnimeStore();
+const recentlyData = ref([]);
+const currentPage = ref(1);
 
 onMounted(async () => {
-  await store.fetchHomeInfo();
-  console.log(store.animeData);
+  recentlyData.value = await store.fetchRecentlyAddedAnime(currentPage.value);
 });
 
-const carouselConfig = {
-  itemsToShow: 1,
-  wrapAround: true,
+const nextPage = async () => {
+  currentPage.value += 1;
+  recentlyData.value = await store.fetchRecentlyAddedAnime(currentPage.value);
 };
 
+const prevPage = async () => {
+  if (currentPage.value > 1) {
+    currentPage.value -= 1;
+    recentlyData.value = await store.fetchRecentlyAddedAnime(currentPage.value);
+  }
+};
 </script>
 
 <template>
   <Navbar />
+
   <main class="container-anime flex flex-col md:flex-row mx-auto py-5 gap-4">
     <div class="left-main w-full lg:w-[1500px]">
-      <Carousel
-        v-bind="carouselConfig"
-        :autoplay="3000"
-        :mouse-drag="true"
-        :touch-drag="true"
-      >
-        <Slide v-for="anime in store.animeData.data?.spotlight" :key="anime.id">
-          <div class="carousel__item">
-            <div class="card flex text-white gap-3">
-              <div class="card-img relative w-full">
-                <img class="h-[350px] object-contain object-center lg:h-auto" :src="anime.poster" alt="" />
-
-                <div
-                  class="anime-description hidden md:flex flex-col gap-2 absolute bottom-10 right-50 bg-[#0B0A0D] p-2 rounded"
-                >
-                  <h3 class="title text-xl">{{ anime.title }}</h3>
-                  <p class="date text-[#FFC107] text-sm">
-                    {{ anime.aired }}
-                  </p>
-                  <p class="text-sm">Summary:</p>
-                  <p class="summary text-sm">{{ anime.synopsis }}</p>
-
-                  <p class="text-[#FFC107] text-sm">Status: Ongoing</p>
-                  <p class="text-sm">Type: {{ anime.type }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Slide>
-
-        <template #addons>
-          <Navigation />
-          <Pagination />
-        </template>
-      </Carousel>
-
-      <div class="bg-[#222222] mt-6">
+      <div class="bg-[#222222] mt-6 p-0.5">
         <div
           class="orange-border text-white bg-[#DD8808] p-2 px-4 rounded-tr rounded-tl font-['Poppins'] flex justify-between items-center"
         >
-          <span class="font-semibold">Newly Added</span>
-          <router-link
-            to="/anime/recently-added"
-            class="text-xs border bg-[#222222] border-[#222222] p-1 cursor-pointer"
-            >VIEW ALL</router-link
-          >
+          <span class="font-semibold">Recently Added</span>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-6 gap-3.5 p-4 font-['Poppins']">
+        <div
+          class="grid grid-cols-2 md:grid-cols-6 gap-3.5 p-4 font-['Poppins']"
+        >
           <div
             class="card cursor-pointer group relative overflow-hidden"
-            v-for="anime in store.animeData.data?.newAdded"
+            v-for="anime in recentlyData.data?.response"
             :key="anime.id"
           >
             <router-link :to="`/anime-info/${anime.id}`">
@@ -124,10 +91,59 @@ const carouselConfig = {
               <span
                 class="text-white text-center block text-xs mt-2 mb-5 transition-colors duration-300 group-hover:text-[#DD8808]"
               >
-                {{ anime.title}}
+                {{ anime.title }}
               </span>
             </router-link>
           </div>
+        </div>
+
+        <div class="w-full flex flex-row-reverse justify-center items-center gap-2.5 mb-3 mt-5">
+          <button
+            @click="nextPage"
+            class="text-white cursor-pointer bg-[#DD8808] hover:bg-[#c47807] text-sm flex items-center px-10 py-2 rounded transition-colors duration-300 self-start"
+          >
+            Next
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M9 6l6 6-6 6"
+                fill="none"
+                stroke="white"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+
+          <div class="text-white">Page {{ currentPage }}</div>
+
+          <button
+            @click="prevPage"
+            v-if="currentPage > 1"
+            class="text-white cursor-pointer bg-[#DD8808] hover:bg-[#c47807] text-sm flex flex-row-reverse items-center px-10 py-2 rounded transition-colors duration-300 self-start"
+          >
+            Prev
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M15 6l-6 6 6 6"
+                fill="none"
+                stroke="white"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -135,31 +151,3 @@ const carouselConfig = {
     <RightPanel />
   </main>
 </template>
-
-<style>
-.anime-description {
-  font-family: "Fira Sans", sans-serif;
-}
-
-.anime-description .summary {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 400px;
-}
-
-.carousel__pagination-button {
-  border-radius: 12px;
-}
-
-.carousel__next,
-.carousel__prev {
-  color: #ffffff;
-  height: 42px;
-  width: auto;
-}
-
-.carousel__pagination-button--active {
-  background-color: #ffd400;
-}
-</style>

@@ -7,6 +7,7 @@ import SeriesView from "../views/SeriesView.vue";
 import SearchView from "../views/SearchView.vue"
 import PopularView from "../views/PopularView.vue"
 import TopAiringView from "../views/TopAiringView.vue"
+import RecentlyAddedView from "../views/RecentlyAddedView.vue"
 
 const routes = [
     {
@@ -39,6 +40,10 @@ const routes = [
     {
         path:'/anime/top-airing',
         component: TopAiringView
+    },
+    {
+        path:'/anime/recently-added',
+        component: RecentlyAddedView
     }
    
 ]
