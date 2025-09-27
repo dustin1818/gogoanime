@@ -20,10 +20,6 @@ const filteredEpisodes = computed(() => {
   });
 });
 
-const saveEp = (epNumber) => {
-  localStorage.setItem("epNumber", epNumber);
-};
-
 const loadEpisodes = async () => {
   if (!store.currentAnimeId) return;
   
@@ -77,11 +73,10 @@ watch(() => route.params, () => {
       </div>
       <div v-else class="grid grid-cols-3 md:grid-cols-5 gap-4">
         <button
-          class="rounded-md border border-gray-400 bg-[#3B3B3B] px-4 py-2 hover:bg-[#3b3b3bef] hover:text-[#DD8808]"
+          class="rounded-md bg-[#3B3B3B] px-4 py-2 hover:bg-[#DD8808] hover:text-white"
           :class="{ 'bg-[#DD8808] text-white': route.params.title === episode.id }"
           v-for="episode in filteredEpisodes"
           :key="episode.number"
-          @click="saveEp(episode.episodeNumber)"
         >
           <router-link :to="`/anime-episodes/${episode.id}`">
             Episode {{ episode.episodeNumber }}
