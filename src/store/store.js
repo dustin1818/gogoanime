@@ -91,6 +91,24 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     }
   }
 
+  const fetchPopularAnime = async (number) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/most-popular?page=${number}`)
+      return response.data
+    } catch (error) {
+        console.error("Fetching popular anime failed", error)
+    }
+  }
+
+  const fetchTopAiringAnime = async (number) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/top-airing?page=${number}`)
+      return response.data
+    } catch (error) {
+        console.error("Fetching top airing anime failed", error)
+    }
+  }
+
   return {
     selectedGenres,
     isModalOpen,
@@ -105,6 +123,8 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     setCurrentAnimeId,
     fetchSearchResults,
     fetchMoviesAnime,
-    fetchSeriesAnime
+    fetchSeriesAnime,
+    fetchPopularAnime,
+    fetchTopAiringAnime,
   };
 });

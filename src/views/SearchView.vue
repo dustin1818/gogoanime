@@ -1,17 +1,22 @@
 <script setup>
 import { onMounted } from "vue";
 import { useGogoAnimeStore } from "../store/store";
+import Navbar from "@/components/Navbar.vue";
 
 const store = useGogoAnimeStore();
 
 onMounted(() => {
-    console.log(store.selectedGenres)
-})
-
+ console.log(store.selectedGenres.map((x) => x))
+});
 </script>
 
 <template>
-     
-    <div class="text-white">{{ store.selectedGenres[0] }}</div>
-    <div class="text-white">{{ store.selectedGenres[1] }}</div>
+  <Navbar />
+
+  <div
+    class="container-anime flex flex-col md:flex-row justify-between mx-auto items-start gap-8 mt-10"
+  >
+    <div class="left-panel"></div>
+
+  </div>
 </template>

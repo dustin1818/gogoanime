@@ -121,9 +121,9 @@ const carouselConfig = {
               </div>
 
               <span
-                class="text-white text-center block text-xs mt-5 transition-colors duration-300 group-hover:text-[#DD8808]"
+                class="text-white text-center block text-xs mt-2 mb-5 transition-colors duration-300 group-hover:text-[#DD8808]"
               >
-                {{ anime.name }}
+                {{ anime.title   }}
               </span>
             </router-link>
           </div>

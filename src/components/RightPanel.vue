@@ -10,6 +10,7 @@ const store = useGogoAnimeStore();
 onMounted(async () => {
   if (!store.animeData.value?.data) {
     await store.fetchHomeInfo();
+    console.error(store.animeData.data)
   }
 });
 </script>
@@ -81,7 +82,7 @@ onMounted(async () => {
       </button>
     </router-link>
     </div>
-    
+  
     <Ongoing :ongoing-anime="store.animeData.data?.newAdded" />
     <Categories :categories-anime="store.animeData.data?.top10" />
   </div>

@@ -33,6 +33,8 @@ const props = defineProps({
       </div>
     </div>
 
+    <h2 class="font-['Poppins'] text-sm text-white text-center my-4" v-if="categoriesAnime?.month.length == 0 && activeTab === tabs[0]">No Weekly Anime</h2>
+
     <router-link
       :to="`/anime-info/${anime.id}`"
       class="text-white flex items-center mb-4"
@@ -80,7 +82,10 @@ const props = defineProps({
           <h2 class="font-['Poppins'] text-sm">{{ anime.title }}</h2>
         </div>
       </div>
+
     </router-link>
+
+    <h2 class="font-['Poppins'] text-sm text-white text-center my-4" v-if="categoriesAnime?.month.length == 0 && activeTab === tabs[1]">No Monthly Anime</h2>
 
     <router-link
       :to="`/anime-info/${anime.id}`"
@@ -105,6 +110,8 @@ const props = defineProps({
         </div>
       </div>
     </router-link>
+
+    <h2 class="font-['Poppins'] text-sm text-white text-center my-4" v-if="categoriesAnime?.today.length == 0 && activeTab === tabs[2]">No All Anime</h2>
   </div>
 </template>
 

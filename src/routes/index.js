@@ -5,13 +5,12 @@ import AnimeStreamView from "../views/AnimeStreamView.vue";
 import MoviesView from "../views/MoviesView.vue"
 import SeriesView from "../views/SeriesView.vue";
 import SearchView from "../views/SearchView.vue"
+import PopularView from "../views/PopularView.vue"
+import TopAiringView from "../views/TopAiringView.vue"
 
 const routes = [
     {
         path: '', component: HomeView
-    },
-    {
-        path: '/series', component: SeriesView
     },
     {
         path:'/anime-info/:id',
@@ -32,6 +31,14 @@ const routes = [
     {
         path:'/anime/search',
         component: SearchView
+    },
+    {
+        path:'/anime/popular',
+        component: PopularView
+    },
+    {
+        path:'/anime/top-airing',
+        component: TopAiringView
     }
    
 ]

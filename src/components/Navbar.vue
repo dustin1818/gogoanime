@@ -174,7 +174,8 @@ onUnmounted(() => {
         class="orange-upper container-anime mx-auto px-3 py-3 flex text-white gap-5"
       >
         <router-link class="nav-link" to="/">Home</router-link>
-        <router-link class="nav-link" to="/">Schedule</router-link>
+        <router-link class="nav-link" to="/anime/popular">Popular</router-link>
+        <router-link class="nav-link" to="/anime/top-airing">Top-Airing</router-link>
         <router-link class="nav-link" to="/anime/series">TV Series</router-link>
         <router-link class="nav-link" to="/anime/movies">Movies</router-link>
       </div>
