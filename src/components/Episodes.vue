@@ -61,7 +61,6 @@ const loadEpisodes = async () => {
     if (storedAnimeId && !store.currentAnimeId) {
       store.currentAnimeId = storedAnimeId;
     } else if (!store.currentAnimeId) {
-      console.warn('No anime ID available');
       return;
     }
   }
@@ -84,13 +83,11 @@ const loadEpisodes = async () => {
   try {
     isLoading.value = true;
     error.value = null;
-    console.log('Fetching episodes for anime:', store.currentAnimeId);
     await store.fetchAnimeEpisodes(store.currentAnimeId);
     
     if (store.episodeData) {
       localStorage.setItem(STORAGE_KEYS.EPISODE_DATA, JSON.stringify(store.episodeData));
       localStorage.setItem(STORAGE_KEYS.CURRENT_ANIME_ID, store.currentAnimeId);
-      console.log('Saved episodes to cache:', store.episodeData);
     }
   } catch (err) {
     console.error('Failed to load episodes:', err);
@@ -100,22 +97,6 @@ const loadEpisodes = async () => {
   }
 };
 
-const selectEpisode = (episode) => {
-  const selectedData = {
-    id: episode.id,
-    episodeNumber: episode.episodeNumber,
-    animeId: store.currentAnimeId,
-    timestamp: Date.now()
-  };
-  localStorage.setItem(STORAGE_KEYS.SELECTED_EPISODE, JSON.stringify(selectedData));
-  
-  router.push(`/anime-episodes/${episode.id}`);
-};
-
-const clearSearch = () => {
-  episodeValue.value = "";
-  localStorage.setItem(STORAGE_KEYS.SEARCH_QUERY, "");
-};
 
 const initializeFromStorage = () => {
   console.log('Initializing from storage...');
@@ -123,13 +104,11 @@ const initializeFromStorage = () => {
   const savedSearch = localStorage.getItem(STORAGE_KEYS.SEARCH_QUERY);
   if (savedSearch) {
     episodeValue.value = savedSearch;
-    console.log('Restored search query:', savedSearch);
   }
   
   const savedAnimeId = localStorage.getItem(STORAGE_KEYS.CURRENT_ANIME_ID);
   if (savedAnimeId && !store.currentAnimeId) {
     store.currentAnimeId = savedAnimeId;
-    console.log('Restored anime ID:', savedAnimeId);
   }
   
   const savedEpisodeData = localStorage.getItem(STORAGE_KEYS.EPISODE_DATA);
@@ -137,7 +116,6 @@ const initializeFromStorage = () => {
     try {
       const parsedData = JSON.parse(savedEpisodeData);
       store.episodeData = parsedData;
-      console.log('Restored episode data:', parsedData);
     } catch (e) {
       console.warn('Failed to parse saved episode data:', e);
       localStorage.removeItem(STORAGE_KEYS.EPISODE_DATA);
