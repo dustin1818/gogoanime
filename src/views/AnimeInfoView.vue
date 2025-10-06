@@ -35,12 +35,14 @@ const fetchAnime = async (id) => {
 
 onMounted(() => {
   fetchAnime(route.params.id);
+  localStorage.setItem("gogo_current_anime_id", route.params.id);
 });
 
 watch(
   () => route.params.id,
   (newId) => {
     fetchAnime(newId);
+    localStorage.setItem("gogo_current_anime_id", route.params.id);
   }
 );
 

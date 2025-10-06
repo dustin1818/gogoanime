@@ -85,7 +85,12 @@ async function loadEpisode(routeId) {
     if (track.processedUrl && track.processedUrl.startsWith('blob:')) {
       URL.revokeObjectURL(track.processedUrl);
     }
-  });
+  }); 
+  
+  const animeId = localStorage.getItem("gogo_current_anime_id");
+  if (animeId) {
+    store.setCurrentAnimeId(animeId);
+  }
 
   episodes.data = await store.fetchAnimeStreamEps(routeId);
 
