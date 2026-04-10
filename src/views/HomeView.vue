@@ -47,6 +47,7 @@ const goToSlide = (index) => {
         <div class="relative">
           <Carousel
             ref="heroCarousel"
+            class="home-hero-carousel"
             v-model="currentSlide"
             v-bind="carouselConfig"
             :autoplay="4500"
@@ -54,7 +55,7 @@ const goToSlide = (index) => {
             :touch-drag="true"
           >
             <Slide v-for="anime in spotlightAnime" :key="anime.id">
-              <div class="px-0.5">
+              <div>
                 <div
                   class="relative min-h-[420px] overflow-hidden rounded-[22px] border border-[#2e2619] bg-[radial-gradient(circle_at_top_left,rgba(221,136,8,0.3),transparent_32%),linear-gradient(140deg,#1a1410_0%,#0b0a0d_42%,#121212_100%)] text-white shadow-[0_24px_60px_rgba(0,0,0,0.35)] max-md:min-h-[500px]"
                 >

@@ -23,6 +23,11 @@ const filteredEpisodes = computed(() => {
 });
 
 const animateEpisodes = () => {
+  const count = filteredEpisodes.value?.length ?? 0;
+  if (count > 100) {
+    visibleEpisodes.value = new Set(Array.from({ length: count }, (_, i) => i));
+    return;
+  }
   visibleEpisodes.value = new Set();
   filteredEpisodes.value?.forEach((_, i) => {
     setTimeout(() => {
