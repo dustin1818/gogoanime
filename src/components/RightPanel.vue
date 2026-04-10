@@ -10,19 +10,24 @@ const store = useGogoAnimeStore();
 onMounted(async () => {
   if (!store.animeData.value?.data) {
     await store.fetchHomeInfo();
-    console.error(store.animeData.data)
+    console.error(store.animeData.data);
   }
 });
 </script>
 
 <template>
-  <div class="right-main w-auto md:w-[650px]">
-    <div class="border border-[#222222] rounded bg-[#222222] p-3">
+  <div class="right-main w-full xl:w-[360px] xl:min-w-[360px] xl:flex-none">
+    <div class="rounded-xl bg-[#1a1a1f] border border-[#2a2a30] p-4">
       <div
-        class="font-['Poppins'] flex items-center justify-center gap-1 border border-[#333333] rounded bg-[#333333] text-white text-center text-sm p-3 cursor-pointer"
+        class="font-['Poppins'] flex items-center justify-center gap-2 rounded-lg bg-[#2a2a30] text-white text-center text-sm p-3 cursor-pointer hover:bg-[#333338] transition-colors duration-200"
         @click="store.showGenreModal"
       >
-        Genre {{store.selectedGenres.length > 0 ? store.selectedGenres.length + ' selected' : 'All'  }}
+        Genre
+        {{
+          store.selectedGenres.length > 0
+            ? store.selectedGenres.length + " selected"
+            : "All"
+        }}
         <svg
           width="18"
           height="18"
@@ -59,32 +64,39 @@ onMounted(async () => {
       </Modal>
 
       <router-link to="/anime/search">
-      <button
-        class="flex items-center justify-center gap-1 p-2 mt-4 rounded w-full text-white text-sm text-center bg-[#DD8808]"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="14"
-          height="14"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="#FFFFFF"
-          stroke-width="2"
+        <button
+          class="flex items-center justify-center gap-2 p-2.5 mt-3 rounded-lg w-full text-white text-sm font-medium text-center bg-[#DD8808] hover:bg-[#c47807] transition-colors duration-200"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-          />
-        </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="#FFFFFF"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+            />
+          </svg>
 
-        Search
-      </button>
-    </router-link>
+          Search
+        </button>
+      </router-link>
     </div>
-  
-    <Ongoing :ongoing-anime="store.animeData.data?.newAdded" />
-    <Categories :categories-anime="store.animeData.data?.top10" />
+
+    <Categories :categories-anime="store.animeData.data?.topTen" />
+    <Ongoing
+      title="Most Favorite"
+      :anime-list="store.animeData.data?.mostFavorite"
+    />
+    <Ongoing
+      title="Most Popular"
+      :anime-list="store.animeData.data?.mostPopular"
+    />
   </div>
 </template>
 

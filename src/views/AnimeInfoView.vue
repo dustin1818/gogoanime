@@ -7,6 +7,7 @@ import Modal from "@/components/Modal.vue";
 import RightPanel from "../components/RightPanel.vue";
 import Navbar from "@/components/Navbar.vue";
 import Episodes from "@/components/Episodes.vue";
+import Loading from "@/components/Loading.vue";
 
 const route = useRoute();
 const store = useGogoAnimeStore();
@@ -21,9 +22,7 @@ const fetchAnime = async (id) => {
   try {
     isLoading.value = true;
     store.setCurrentAnimeId(id);
-    const [animeData] = await Promise.all([
-      store.fetchAnimeInfo(id),
-    ]);
+    const [animeData] = await Promise.all([store.fetchAnimeInfo(id)]);
     anime.data = animeData.data;
     console.log(anime.data);
   } catch (error) {
@@ -43,7 +42,7 @@ watch(
   (newId) => {
     fetchAnime(newId);
     localStorage.setItem("gogo_current_anime_id", route.params.id);
-  }
+  },
 );
 
 const showModal = ref(false);
@@ -69,16 +68,10 @@ const postComment = () => {
     confirmButtonColor: "#DD8808",
   });
 };
-
 </script>
 
 <template class="bg-gray-900 text-white min-h-screen">
-  <div
-    class="text-white text-2xl text-center min-h-screen flex justify-center items-center"
-    v-if="isLoading"
-  >
-    Loading...
-  </div>
+  <Loading v-if="isLoading" />
 
   <div v-else>
     <Navbar />
@@ -112,7 +105,9 @@ const postComment = () => {
       </template>
 
       <div class="flex flex-col items-start basis-[1700px]">
-        <div class="flex flex-col md:flex-row gap-8 bg-[#222222] rounded p-6 font-['Poppins']">
+        <div
+          class="flex flex-col md:flex-row gap-8 bg-[#222222] rounded p-6 font-['Poppins']"
+        >
           <div class="lg:w-50 flex-shrink-0">
             <div class="relative mb-4">
               <img
@@ -184,9 +179,10 @@ const postComment = () => {
                     class="w-3 h-3 bg-yellow-500 rounded-full flex-shrink-0"
                   ></span>
                   <span class="text-gray-400 text-sm">Released:</span>
-                  <span class="text-white text-sm">{{
-                    anime.data.aired?.from
-                  }} - {{ anime.data.aired?.to }}</span>
+                  <span class="text-white text-sm"
+                    >{{ anime.data.aired?.from }} -
+                    {{ anime.data.aired?.to }}</span
+                  >
                 </div>
                 <div class="flex items-center gap-2">
                   <span
@@ -214,9 +210,7 @@ const postComment = () => {
                     class="w-3 h-3 bg-orange-500 rounded-full flex-shrink-0"
                   ></span>
                   <span class="text-gray-400 text-sm">Type:</span>
-                  <span class="text-white text-sm">{{
-                    anime.data.type
-                  }}</span>
+                  <span class="text-white text-sm">{{ anime.data.type }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span
@@ -349,64 +343,66 @@ const postComment = () => {
           <div class="mx-auto">
             <h1 class="text-2xl font-bold mb-6">Recommended Series</h1>
 
-            <div class="grid grid-cols-2 md:grid-cols-6 gap-3.5 p-4 font-['Poppins']">
-          <div
-            class="card cursor-pointer group relative overflow-hidden"
-            v-for="anime in anime.data.recommended"
-            :key="anime.id"
-          >
-            <router-link :to="`/anime-info/${anime.id}`">
-              <div class="relative">
-                <img
-                  :src="anime.poster"
-                  :alt="anime.name"
-                  class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-
-                <span
-                  class="absolute top-2 right-2 bg-[#C32F00] text-white text-xs px-2 py-0.5 rounded"
-                >
-                  {{ anime.type }} Show
-                </span>
-
-                <span
-                  class="absolute bottom-2 left-2 bg-[#0B0A0D] text-white text-xs px-2 py-0.5 rounded"
-                >
-                  Ep: {{ anime.episodes.sub }}/{{ anime.episodes.sub }}
-                </span>
-
-                <span
-                  class="absolute bottom-2 right-2 bg-[#DD8808] text-black text-xs px-2 py-0.5 rounded"
-                >
-                  Sub
-                </span>
-
-                <div
-                  class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                >
-                  <div
-                    class="bg-white/70 w-12 h-12 rounded-full flex items-center justify-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-6 w-6 text-black"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M6 4l10 6-10 6V4z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <span
-                class="text-white text-center block text-xs mt-2 mb-5 transition-colors duration-300 group-hover:text-[#DD8808]"
+            <div
+              class="grid grid-cols-2 md:grid-cols-6 gap-3.5 p-4 font-['Poppins']"
+            >
+              <div
+                class="card cursor-pointer group relative overflow-hidden"
+                v-for="anime in anime.data.recommended"
+                :key="anime.id"
               >
-                {{ anime.title }}
-              </span>
-            </router-link>
-          </div>
-        </div>
+                <router-link :to="`/anime-info/${anime.id}`">
+                  <div class="relative">
+                    <img
+                      :src="anime.poster"
+                      :alt="anime.name"
+                      class="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+
+                    <span
+                      class="absolute top-2 right-2 bg-[#C32F00] text-white text-xs px-2 py-0.5 rounded"
+                    >
+                      {{ anime.type }} Show
+                    </span>
+
+                    <span
+                      class="absolute bottom-2 left-2 bg-[#0B0A0D] text-white text-xs px-2 py-0.5 rounded"
+                    >
+                      Ep: {{ anime.episodes.sub }}/{{ anime.episodes.sub }}
+                    </span>
+
+                    <span
+                      class="absolute bottom-2 right-2 bg-[#DD8808] text-black text-xs px-2 py-0.5 rounded"
+                    >
+                      Sub
+                    </span>
+
+                    <div
+                      class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    >
+                      <div
+                        class="bg-white/70 w-12 h-12 rounded-full flex items-center justify-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-6 w-6 text-black"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M6 4l10 6-10 6V4z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <span
+                    class="text-white text-center block text-xs mt-2 mb-5 transition-colors duration-300 group-hover:text-[#DD8808]"
+                  >
+                    {{ anime.title }}
+                  </span>
+                </router-link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

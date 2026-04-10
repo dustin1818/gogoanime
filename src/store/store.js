@@ -8,6 +8,7 @@ export const useGogoAnimeStore = defineStore("anime", () => {
   const isModalOpen = ref(false);
   const episodeData = ref([]);
   const currentAnimeId = ref(null);
+  const isLoading = ref(false);
 
   const showGenreModal = () => {
     isModalOpen.value = true;
@@ -32,7 +33,7 @@ export const useGogoAnimeStore = defineStore("anime", () => {
   const fetchAnimeInfo = async (id) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_ANIME_URL}/${id}`
+        `${import.meta.env.VITE_ANIME_URL}/${id}`,
       );
       return response.data;
     } catch (error) {
@@ -44,7 +45,7 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     try {
       episodeData.value = [];
       const response = await axios.get(
-        `${import.meta.env.VITE_ANIME_EP_URL}s/${id}`
+        `${import.meta.env.VITE_ANIME_EP_URL}s/${id}`,
       );
       episodeData.value = response.data;
       return episodeData.value;
@@ -56,7 +57,7 @@ export const useGogoAnimeStore = defineStore("anime", () => {
   const fetchAnimeStreamEps = async (id) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_ANIME_STREAM_URL}?server=HD-2&type=sub&id=${id}`
+        `${import.meta.env.VITE_ANIME_STREAM_URL}?server=HD-2&type=sub&id=${id}`,
       );
       return response.data;
     } catch (error) {
@@ -66,61 +67,107 @@ export const useGogoAnimeStore = defineStore("anime", () => {
 
   const fetchSearchResults = async (query) => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_ANIME_SEARCH_URL}?keyword=${query}&page=1`)
-        return response.data;
+      const response = await axios.get(
+        `${import.meta.env.VITE_ANIME_SEARCH_URL}?keyword=${query}&page=1`,
+      );
+      return response.data;
     } catch (error) {
-        console.error("Fetching anime search results failed", error)
+      console.error("Fetching anime search results failed", error);
     }
   };
 
   const fetchMoviesAnime = async (number) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/movie?page=${number}`)
-      return response.data
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/movie?page=${number}`,
+      );
+      return response.data;
     } catch (error) {
-        console.error("Fetching anime movies failed", error)
+      console.error("Fetching anime movies failed", error);
     }
-  }
+  };
 
   const fetchSeriesAnime = async (number) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/tv?page=${number}`)
-      return response.data
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/tv?page=${number}`,
+      );
+      return response.data;
     } catch (error) {
-        console.error("Fetching anime series failed", error)
+      console.error("Fetching anime series failed", error);
     }
-  }
+  };
 
   const fetchPopularAnime = async (number) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/most-popular?page=${number}`)
-      return response.data
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/most-popular?page=${number}`,
+      );
+      return response.data;
     } catch (error) {
-        console.error("Fetching popular anime failed", error)
+      console.error("Fetching popular anime failed", error);
     }
-  }
+  };
 
   const fetchTopAiringAnime = async (number) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/top-airing?page=${number}`)
-      return response.data
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/top-airing?page=${number}`,
+      );
+      return response.data;
     } catch (error) {
-        console.error("Fetching top airing anime failed", error)
+      console.error("Fetching top airing anime failed", error);
     }
-  }
+  };
 
   const fetchRecentlyAddedAnime = async (number) => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_ANIME_URL}s/recently-added?page=${number}`)
-      return response.data
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/recently-added?page=${number}`,
+      );
+      return response.data;
     } catch (error) {
-        console.error("Fetching recently added anime failed", error)
+      console.error("Fetching recently added anime failed", error);
     }
-  }
+  };
+
+  const fetchNewOnAniWatch = async (number) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/top-upcoming?page=${number}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fetching new on aniwatch failed", error);
+    }
+  };
+
+  const fetchTopUpcoming = async (number) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/top-upcoming?page=${number}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fetching top upcoming anime failed", error);
+    }
+  };
+
+  const fetchTrending = async (number) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/most-popular?page=${number}`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Fetching most-popular anime failed", error);
+    }
+  };
 
   return {
     selectedGenres,
     isModalOpen,
+    isLoading,
     showGenreModal,
     animeData,
     fetchHomeInfo,
@@ -135,6 +182,9 @@ export const useGogoAnimeStore = defineStore("anime", () => {
     fetchSeriesAnime,
     fetchPopularAnime,
     fetchTopAiringAnime,
-    fetchRecentlyAddedAnime
+    fetchRecentlyAddedAnime,
+    fetchNewOnAniWatch,
+    fetchTopUpcoming,
+    fetchTrending,
   };
 });

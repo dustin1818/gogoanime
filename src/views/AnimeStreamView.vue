@@ -1,175 +1,226 @@
 <script setup>
-import { onMounted, reactive, ref, onBeforeUnmount, watch, nextTick } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useGogoAnimeStore } from "../store/store";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import RightPanel from "@/components/RightPanel.vue";
 import Navbar from "@/components/Navbar.vue";
 import Episodes from "@/components/Episodes.vue";
-import Hls from "hls.js";
 
 const route = useRoute();
+const router = useRouter();
 const store = useGogoAnimeStore();
-const src = ref("");
-const videoRef = ref(null);
-const episodes = reactive({});
-const subtitles = ref([]);
-let hls = null;
 
-function getProxiedUrl(originalUrl, forceProxy = false) {
-  if (!forceProxy && (originalUrl.includes('.vtt') || originalUrl.includes('subtitle'))) {
-    return originalUrl;
-  }
-  
-  return `https://hls-proxy-m3u8.vercel.app/m3u8-proxy?url=${encodeURIComponent(originalUrl)}&headers=${encodeURIComponent(JSON.stringify({
-    referer: "https://vidwish.live/"
-  }))}`;
-}
+const category = ref("sub");
+const server = ref("vidWish");
+const isLoadingEpisodes = ref(false);
 
-async function fetchAndCreateBlobUrl(vttUrl) {
-  try {
-    const response = await fetch(getProxiedUrl(vttUrl));
-    const vttContent = await response.text();
-    const blob = new Blob([vttContent], { type: 'text/vtt' });
-    return URL.createObjectURL(blob);
-  } catch (error) {
-    console.warn('Failed to fetch VTT content, falling back to direct URL:', error);
-    return vttUrl;
-  }
-}
+const episodeList = computed(() => store.episodeData?.data ?? []);
+const currentEpisodeId = computed(() => String(route.params.title ?? ""));
+const currentEpisodeIndex = computed(() =>
+  episodeList.value.findIndex(
+    (episode) => episode.id === currentEpisodeId.value,
+  ),
+);
+const currentEpisode = computed(() =>
+  currentEpisodeIndex.value >= 0
+    ? episodeList.value[currentEpisodeIndex.value]
+    : null,
+);
+const hasPrevEp = computed(() => currentEpisodeIndex.value > 0);
+const hasNextEp = computed(
+  () =>
+    currentEpisodeIndex.value >= 0 &&
+    currentEpisodeIndex.value < episodeList.value.length - 1,
+);
+const iframeEpisodeId = computed(() => {
+  const rawId = currentEpisodeId.value;
+  const streamId = rawId.includes("ep=") ? rawId.split("ep=").pop() : rawId;
 
-async function processSubtitleTracks(tracks) {
-  const processedTracks = await Promise.all(
-    tracks.map(async (track) => {
-      if (track.file && track.file.includes('.vtt')) {
-        try {
-          const blobUrl = await fetchAndCreateBlobUrl(track.file);
-          return { ...track, processedUrl: blobUrl };
-        } catch (error) {
-          console.warn('Failed to process track:', track.label, error);
-          return { ...track, processedUrl: track.file };
-        }
-      }
-      return { ...track, processedUrl: track.file };
-    })
-  );
-  return processedTracks;
-}
+  return String(streamId ?? "").split("&")[0];
+});
+const iframeSrc = computed(() => {
+  if (!iframeEpisodeId.value) return "";
 
-function updateSubtitleTracks() {
-  if (!videoRef.value) return;
-  const existingTracks = videoRef.value.querySelectorAll('track');
-  existingTracks.forEach(track => track.remove());
-  
-  subtitles.value.forEach((track, index) => {
-    const trackElement = document.createElement('track');
-    trackElement.kind = 'subtitles';
-    trackElement.src = track.processedUrl || track.file;
-    trackElement.label = track.label;
-    trackElement.srclang = track.lang || 'en';
-    
-    if (track.label === 'English') {
-      trackElement.default = true;
-    }
-    
-    videoRef.value.appendChild(trackElement);
-  });
-}
+  const host = server.value === "vidWish" ? "vidwish.live" : "megaplay.buzz";
+  return `https://${host}/stream/s-2/${encodeURIComponent(iframeEpisodeId.value)}/${category.value}`;
+});
+const currentEpisodeNumber = computed(
+  () =>
+    currentEpisode.value?.episodeNumber ?? currentEpisode.value?.number ?? "?",
+);
 
-async function loadEpisode(routeId) {
-  if (hls) {
-    hls.destroy();
-    hls = null;
-  }
-
-  subtitles.value.forEach(track => {
-    if (track.processedUrl && track.processedUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(track.processedUrl);
-    }
-  }); 
-  
+const loadEpisodes = async () => {
   const animeId = localStorage.getItem("gogo_current_anime_id");
-  if (animeId) {
+
+  if (animeId && store.currentAnimeId !== animeId) {
     store.setCurrentAnimeId(animeId);
   }
 
-  episodes.data = await store.fetchAnimeStreamEps(routeId);
+  if (!store.currentAnimeId) return;
 
-  const data = episodes.data.data;
-  const originalUrl = data.link.file;
-  src.value = getProxiedUrl(originalUrl, true);
-
-  if (data.tracks && data.tracks.length > 0) {
-    const subtitleTracks = data.tracks.filter(track => track.kind !== 'thumbnails');
-    subtitles.value = await processSubtitleTracks(subtitleTracks);
-  } else {
-    subtitles.value = [];
+  try {
+    isLoadingEpisodes.value = true;
+    await store.fetchAnimeEpisodes(store.currentAnimeId);
+  } catch (error) {
+    console.error("Failed to load episodes:", error);
+  } finally {
+    isLoadingEpisodes.value = false;
   }
+};
 
-  if (videoRef.value) {
-    await nextTick();
-    updateSubtitleTracks();
-    
-    if (Hls.isSupported()) {
-      hls = new Hls();
-      hls.loadSource(src.value);
-      hls.attachMedia(videoRef.value);
-      
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        updateSubtitleTracks();
-      });
-    } else if (videoRef.value.canPlayType("application/vnd.apple.mpegurl")) {
-      videoRef.value.src = src.value;
+const changeCategory = (newType) => {
+  if (newType !== category.value) {
+    category.value = newType;
+  }
+};
+
+const changeServer = (newServer) => {
+  if (newServer !== server.value) {
+    server.value = newServer;
+  }
+};
+
+const changeEpisode = (direction) => {
+  const offset = direction === "prev" ? -1 : 1;
+  const targetEpisode = episodeList.value[currentEpisodeIndex.value + offset];
+
+  if (!targetEpisode?.id) return;
+
+  router.push(`/anime-episodes/${targetEpisode.id}`);
+};
+
+const getToggleButtonClass = (isActive) =>
+  isActive
+    ? "bg-[#DD8808] text-black"
+    : "bg-[#2A2730] text-white hover:bg-[#3A3542]";
+
+onMounted(async () => {
+  await loadEpisodes();
+});
+
+watch(
+  () => store.currentAnimeId,
+  async (newId, oldId) => {
+    if (newId && newId !== oldId) {
+      await loadEpisodes();
     }
-  }
-}
+  },
+);
 
 watch(
   () => route.params.title,
-  (newEpisodeId, oldEpisodeId) => {
-    if (newEpisodeId && newEpisodeId !== oldEpisodeId) {
-      loadEpisode(newEpisodeId);
+  async () => {
+    category.value = "sub";
+
+    if (!episodeList.value.length) {
+      await loadEpisodes();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
-
-onBeforeUnmount(() => {
-  if (hls) {
-    hls.destroy();
-  }
-  
-  subtitles.value.forEach(track => {
-    if (track.processedUrl && track.processedUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(track.processedUrl);
-    }
-  });
-});
 </script>
 
 <template>
   <Navbar />
 
-  <div class="container-anime flex flex-col md:flex-row justify-between mx-auto items-start gap-8 mt-10">
-    <div class="left-panel">
-      <video ref="videoRef" controls autoplay class="h-[450px] md:h-auto w-full md:w-[1200px] rounded-lg" crossorigin="anonymous">
-        <track
-          v-for="(track, index) in subtitles"
-          :key="`${route.params.title}-${index}`"
-          kind="subtitles"
-          :src="track.processedUrl || track.file"
-          :label="track.label"
-          :srclang="track.lang"
-          :default="track.label === 'English'"
-        />
-      </video>
+  <div
+    class="container-anime flex flex-col md:flex-row justify-between mx-auto items-start gap-8 mt-10"
+  >
+    <div class="left-panel w-full">
+      <div
+        class="overflow-hidden rounded-lg border border-[#23202A] bg-[#17151B] font-['Poppins']"
+      >
+        <div class="aspect-video w-full bg-black">
+          <iframe
+            v-if="iframeSrc"
+            :key="iframeSrc"
+            :src="iframeSrc"
+            class="h-full w-full"
+            allowfullscreen
+            referrerpolicy="origin"
+          ></iframe>
+
+          <div
+            v-else
+            class="flex h-full items-center justify-center px-6 text-center text-sm text-gray-400"
+          >
+            Episode stream is unavailable right now.
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-4 bg-[#1B1820] px-4 py-4 md:px-6">
+          <div
+            class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"
+          >
+            <div class="flex flex-wrap items-center gap-3">
+              <button
+                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300"
+                :class="getToggleButtonClass(server === 'vidWish')"
+                @click="changeServer('vidWish')"
+              >
+                Vidwish
+              </button>
+              <button
+                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300"
+                :class="getToggleButtonClass(server === 'megaPlay')"
+                @click="changeServer('megaPlay')"
+              >
+                Megaplay
+              </button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <button
+                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300"
+                :class="getToggleButtonClass(category === 'sub')"
+                @click="changeCategory('sub')"
+              >
+                SUB
+              </button>
+              <button
+                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300"
+                :class="getToggleButtonClass(category === 'dub')"
+                @click="changeCategory('dub')"
+              >
+                DUB
+              </button>
+
+              <button
+                v-if="hasPrevEp"
+                class="rounded-md bg-[#DD8808] px-3 py-2 text-sm font-semibold text-black transition-colors duration-300 hover:bg-[#c47807]"
+                @click="changeEpisode('prev')"
+              >
+                Prev
+              </button>
+              <button
+                v-if="hasNextEp"
+                class="rounded-md bg-[#DD8808] px-3 py-2 text-sm font-semibold text-black transition-colors duration-300 hover:bg-[#c47807]"
+                @click="changeEpisode('next')"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1 text-sm">
+            <p class="text-gray-300">
+              You are watching Episode {{ currentEpisodeNumber }}
+            </p>
+            <p v-if="currentEpisode?.isFiller" class="text-[#DD8808]">
+              You are watching a filler episode.
+            </p>
+            <p v-else-if="isLoadingEpisodes" class="text-gray-500">
+              Loading episode navigation...
+            </p>
+          </div>
+        </div>
+      </div>
 
       <Episodes />
-
     </div>
-    
-    <RightPanel/>
+
+    <RightPanel />
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

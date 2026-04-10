@@ -1,7 +1,10 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import { useGogoAnimeStore } from "../store/store";
 import Swal from "sweetalert2";
+
+const route = useRoute();
 
 const isMobileMenuOpen = ref(false);
 const hasSearchResults = ref(false);
@@ -87,12 +90,12 @@ onUnmounted(() => {
 
           <div
             v-if="hasSearchResults"
-            class="search-results bg-[#17151B] text-white px-5 py-2 absolute w-full z-50 flex flex-col gap-1"
+            class="search-results bg-[#17151B] text-white px-5 py-2 absolute w-full z-50 flex flex-col gap-1 max-h-80 overflow-y-auto rounded-b"
           >
             <router-link
               v-for="searchResult in searchResults.data?.response"
               :key="searchResult.id"
-              class="cursor-pointer"
+              class="cursor-pointer hover:text-[#DD8808] transition-colors py-1"
               :to="`/anime-info/${searchResult.id}`"
             >
               {{ searchResult.title }}
@@ -140,7 +143,7 @@ onUnmounted(() => {
     >
       <div class="search-input relative">
         <input
-          class="w-[350px] border border-[#23202A] bg-[#17151B] text-white px-5 py-2 rounded placeholder-white text-sm focus:border-[#DD8808]"
+          class="w-full border border-[#23202A] bg-[#17151B] text-white px-5 py-2 rounded placeholder-white text-sm focus:border-[#DD8808]"
           type="text"
           placeholder="Search..."
           @input="handleInput"
@@ -148,12 +151,12 @@ onUnmounted(() => {
 
         <div
           v-if="hasSearchResults"
-          class="search-results bg-[#17151B] text-white px-5 py-2 absolute w-full z-50 flex flex-col gap-1"
+          class="search-results bg-[#17151B] text-white px-5 py-2 absolute w-full z-50 flex flex-col gap-1 max-h-80 overflow-y-auto rounded-b"
         >
           <router-link
             v-for="searchResult in searchResults.data?.response"
             :key="searchResult.id"
-            class="cursor-pointer"
+            class="cursor-pointer hover:text-[#DD8808] transition-colors py-1"
             :to="`/anime-info/${searchResult.id}`"
           >
             {{ searchResult.title }}
@@ -167,27 +170,132 @@ onUnmounted(() => {
       >
         Login
       </button>
+
+      <div class="flex flex-col gap-1 border-t border-[#23202A] pt-4">
+        <router-link
+          to="/"
+          class="mobile-nav-link px-4 py-2.5 rounded-lg text-sm transition-colors duration-200"
+          :class="
+            route.path === '/'
+              ? 'bg-[#DD8808] text-white font-semibold'
+              : 'text-gray-300 hover:bg-[#23202A] hover:text-white'
+          "
+          @click="closeMobileMenu"
+          >Home</router-link
+        >
+        <router-link
+          to="/anime/popular"
+          class="mobile-nav-link px-4 py-2.5 rounded-lg text-sm transition-colors duration-200"
+          :class="
+            route.path === '/anime/popular'
+              ? 'bg-[#DD8808] text-white font-semibold'
+              : 'text-gray-300 hover:bg-[#23202A] hover:text-white'
+          "
+          @click="closeMobileMenu"
+          >Popular</router-link
+        >
+        <router-link
+          to="/anime/top-airing"
+          class="mobile-nav-link px-4 py-2.5 rounded-lg text-sm transition-colors duration-200"
+          :class="
+            route.path === '/anime/top-airing'
+              ? 'bg-[#DD8808] text-white font-semibold'
+              : 'text-gray-300 hover:bg-[#23202A] hover:text-white'
+          "
+          @click="closeMobileMenu"
+          >Top-Airing</router-link
+        >
+        <router-link
+          to="/anime/series"
+          class="mobile-nav-link px-4 py-2.5 rounded-lg text-sm transition-colors duration-200"
+          :class="
+            route.path === '/anime/series'
+              ? 'bg-[#DD8808] text-white font-semibold'
+              : 'text-gray-300 hover:bg-[#23202A] hover:text-white'
+          "
+          @click="closeMobileMenu"
+          >TV Series</router-link
+        >
+        <router-link
+          to="/anime/movies"
+          class="mobile-nav-link px-4 py-2.5 rounded-lg text-sm transition-colors duration-200"
+          :class="
+            route.path === '/anime/movies'
+              ? 'bg-[#DD8808] text-white font-semibold'
+              : 'text-gray-300 hover:bg-[#23202A] hover:text-white'
+          "
+          @click="closeMobileMenu"
+          >Movies</router-link
+        >
+      </div>
     </div>
 
-    <div class="bg-[#DD8808]">
+    <div class="bg-[#DD8808] hidden md:block">
       <div
         class="orange-upper container-anime mx-auto px-3 py-3 flex text-white gap-5"
       >
-        <router-link class="nav-link text-xs md:text-base" to="/">Home</router-link>
-        <router-link class="nav-link text-xs md:text-base" to="/anime/popular">Popular</router-link>
-        <router-link class="nav-link text-xs md:text-base" to="/anime/top-airing">Top-Airing</router-link>
-        <router-link class="nav-link text-xs md:text-base" to="/anime/series">TV Series</router-link>
-        <router-link class="nav-link text-xs md:text-base" to="/anime/movies">Movies</router-link>
+        <router-link
+          class="nav-link text-base"
+          :class="{ 'nav-active': route.path === '/' }"
+          to="/"
+          >Home</router-link
+        >
+        <router-link
+          class="nav-link text-base"
+          :class="{ 'nav-active': route.path === '/anime/popular' }"
+          to="/anime/popular"
+          >Popular</router-link
+        >
+        <router-link
+          class="nav-link text-base"
+          :class="{ 'nav-active': route.path === '/anime/top-airing' }"
+          to="/anime/top-airing"
+          >Top-Airing</router-link
+        >
+        <router-link
+          class="nav-link text-base"
+          :class="{ 'nav-active': route.path === '/anime/series' }"
+          to="/anime/series"
+          >TV Series</router-link
+        >
+        <router-link
+          class="nav-link text-base"
+          :class="{ 'nav-active': route.path === '/anime/movies' }"
+          to="/anime/movies"
+          >Movies</router-link
+        >
       </div>
     </div>
   </header>
 </template>
 
 <style scoped>
-.nav-link:hover {
+.nav-link {
+  padding: 4px 12px;
   border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
   cursor: pointer;
-  transition: all 0.1s ease;
   color: #333333;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.nav-active {
+  color: #ffffff;
+  font-weight: 600;
+  border-bottom: none;
+  border-radius: 0;
+  padding-bottom: 4px;
+  background-image: linear-gradient(#00a676, #00a676);
+  background-size: 60% 1px;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}
+
+.nav-active:hover {
+  color: #ffffff;
+  background-color: transparent;
 }
 </style>

@@ -6,24 +6,24 @@ import RightPanel from "@/components/RightPanel.vue";
 import Loading from "@/components/Loading.vue";
 
 const store = useGogoAnimeStore();
-const seriesData = ref([]);
+const pageData = ref([]);
 const currentPage = ref(1);
 const isLoading = ref(true);
 
 onMounted(async () => {
-  seriesData.value = await store.fetchSeriesAnime(currentPage.value);
+  pageData.value = await store.fetchNewOnAniWatch(currentPage.value);
   isLoading.value = false;
 });
 
 const nextPage = async () => {
   currentPage.value += 1;
-  seriesData.value = await store.fetchSeriesAnime(currentPage.value);
+  pageData.value = await store.fetchNewOnAniWatch(currentPage.value);
 };
 
 const prevPage = async () => {
   if (currentPage.value > 1) {
     currentPage.value -= 1;
-    seriesData.value = await store.fetchSeriesAnime(currentPage.value);
+    pageData.value = await store.fetchNewOnAniWatch(currentPage.value);
   }
 };
 </script>
@@ -39,14 +39,14 @@ const prevPage = async () => {
           <div
             class="orange-border text-white bg-[#DD8808] p-2 px-4 rounded-tr rounded-tl font-['Poppins'] flex justify-between items-center"
           >
-            <span class="font-semibold">Series</span>
+            <span class="font-semibold">New on AniWatch</span>
           </div>
           <div
             class="grid grid-cols-2 md:grid-cols-6 gap-3.5 p-4 font-['Poppins']"
           >
             <div
               class="card cursor-pointer group relative overflow-hidden"
-              v-for="anime in seriesData.data?.response"
+              v-for="anime in pageData.data?.response"
               :key="anime.id"
             >
               <router-link :to="`/anime-info/${anime.id}`">
@@ -64,7 +64,6 @@ const prevPage = async () => {
                   </span>
 
                   <span
-                    v-if="anime.episodes?.sub || anime.episodes?.eps"
                     class="absolute bottom-2 left-2 bg-[#0B0A0D] text-white text-xs px-2 py-0.5 rounded"
                   >
                     Ep: {{ anime.episodes.sub }}/{{ anime.episodes.sub }}
