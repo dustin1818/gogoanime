@@ -161,7 +161,7 @@ watch(
                 Vidwish
               </button>
               <button
-                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300"
+                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300 cursor-pointer"
                 :class="getToggleButtonClass(server === 'megaPlay')"
                 @click="changeServer('megaPlay')"
               >
@@ -171,14 +171,14 @@ watch(
 
             <div class="flex flex-wrap items-center gap-3">
               <button
-                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300"
+                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300 cursor-pointer"
                 :class="getToggleButtonClass(category === 'sub')"
                 @click="changeCategory('sub')"
               >
                 SUB
               </button>
               <button
-                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300"
+                class="rounded-md px-3 py-2 text-sm font-semibold uppercase transition-colors duration-300 cursor-pointer"
                 :class="getToggleButtonClass(category === 'dub')"
                 @click="changeCategory('dub')"
               >
@@ -187,14 +187,14 @@ watch(
 
               <button
                 v-if="hasPrevEp"
-                class="rounded-md bg-[#DD8808] px-3 py-2 text-sm font-semibold text-black transition-colors duration-300 hover:bg-[#c47807]"
+                class="rounded-md bg-[#DD8808] px-3 py-2 text-sm font-semibold text-black transition-colors duration-300 hover:bg-[#c47807] cursor-pointer"
                 @click="changeEpisode('prev')"
               >
                 Prev
               </button>
               <button
                 v-if="hasNextEp"
-                class="rounded-md bg-[#DD8808] px-3 py-2 text-sm font-semibold text-black transition-colors duration-300 hover:bg-[#c47807]"
+                class="rounded-md bg-[#DD8808] px-3 py-2 text-sm font-semibold text-black transition-colors duration-300 hover:bg-[#c47807] cursor-pointer"
                 @click="changeEpisode('next')"
               >
                 Next
